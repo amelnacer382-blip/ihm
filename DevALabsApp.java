@@ -37,8 +37,9 @@ public class DevALabsApp extends JFrame {
     public static final Color COLOR_SUCCESS    = new Color(16, 185, 129);
     public static final Color COLOR_DANGER     = new Color(239, 68, 68);
 
-    private String currentSpace = SPACE_APPRENANT;
+    private String currentSpace = SPACE_LOGIN;
     private String selectedLoginRole = SPACE_APPRENANT;
+    private String currentLoggedRole = null;
     private CardLayout toolBarCardLayout;
     private JPanel toolBarCardPanel;
     private JLabel lblUserSessionTag;
@@ -372,6 +373,16 @@ public class DevALabsApp extends JFrame {
     }
 
     public void switchSpace(String space) {
+        // CONTRÔLE D'ACCÈS DE SÉCURITÉ STRICT (RBAC)
+        if (currentLoggedRole != null && !currentLoggedRole.equals(space) && !space.equals(SPACE_LOGIN)) {
+            JOptionPane.showMessageDialog(this,
+                "⛔ ACCÈS REFUSÉ (Erreur 403 - Sécurité des Rôles)\n\n" +
+                "Votre session active est : " + currentLoggedRole + "\n" +
+                "Vous n'avez pas les autorisations pour accéder à l'espace " + space + ".\n\n" +
+                "👉 Pour accéder à cet espace, veuillez d'abord cliquer sur '🚪 Déconnexion'.",
+                "Sécurité RBAC • DEVA LABS", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         this.currentSpace = space;
 
         // Met à jour l'apparence des boutons de bascule d'espace
@@ -407,6 +418,7 @@ public class DevALabsApp extends JFrame {
     }
 
     private void logoutAction() {
+        currentLoggedRole = null;
         switchSpace(SPACE_LOGIN);
         JOptionPane.showMessageDialog(this, 
             "Déconnexion réussie. Vous êtes redirigé vers le portail d'authentification.", 
@@ -537,6 +549,7 @@ public class DevALabsApp extends JFrame {
             JOptionPane.showMessageDialog(this, "Session ouverte avec succès pour : " + tfLogin.getText() + 
                 " Accès accordé à l'espace dédié.",
                 "Connexion Réussie • DEVA LABS", JOptionPane.INFORMATION_MESSAGE);
+            currentLoggedRole = selectedLoginRole;
             switchSpace(selectedLoginRole);
         });
 

@@ -3110,6 +3110,11 @@
         }
 
         function showScreen(id) {
+            // Protection directe par écran :
+            if (currentLoggedRole === 'Apprenant' && (id === 's6' || id === 's7')) {
+                alert("⛔ Accès refusé : L'écran demandé est réservé aux Enseignants / Administrateurs.");
+                return;
+            }
             document.querySelectorAll('.screen-pane').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
 
@@ -3401,16 +3406,35 @@
         showScreen('s1');
     
         // ========================================================
-        // GESTION MULTI-ESPACES : APPRENANT / ENSEIGNANT / ADMIN
+        // GESTION MULTI-ESPACES AVEC CONTRÔLE D'ACCÈS STRICT (RBAC)
         // ========================================================
-        let currentActiveSpace = 'Apprenant';
+        let currentActiveSpace = 'Login';
+        let currentLoggedRole = null; // null = non connecté (portail)
 
-        function switchSpace(role) {
-            currentActiveSpace = role;
+        function switchSpace(targetRole, bypassSecurity = false) {
+            // CONTRÔLE D'ACCÈS DE SÉCURITÉ STRICT :
+            // Un étudiant connecté NE PEUT PAS accéder à l'espace Enseignant ni Admin !
+            if (!bypassSecurity && currentLoggedRole !== null) {
+                if (currentLoggedRole === 'Apprenant' && (targetRole === 'Enseignant' || targetRole === 'Admin')) {
+                    alert("⛔ ACCÈS REFUSÉ (Erreur 403 - Sécurité des rôles)\n\n" +
+                          "Votre session active est : APPRENANT (Yacine Benali).\n" +
+                          "Vous n'avez pas les autorisations pour accéder à l'" + (targetRole === 'Enseignant' ? "Espace Enseignant" : "Espace Administrateur") + ".\n\n" +
+                          "👉 Pour accéder à cet espace, veuillez d'abord cliquer sur '🚪 Déconnexion', puis vous connecter avec un compte Enseignant.");
+                    return;
+                }
+                if (currentLoggedRole === 'Enseignant' && targetRole === 'Admin') {
+                    alert("⛔ ACCÈS REFUSÉ (Erreur 403)\n\n" +
+                          "Votre session active est : ENSEIGNANT (Dr. Meziani).\n" +
+                          "Privilèges insuffisants pour accéder à la Console d'Administration Superuser.");
+                    return;
+                }
+            }
+
+            currentActiveSpace = targetRole;
 
             // Mise à jour des boutons de navigation d'espaces (Pills)
             document.querySelectorAll('.btn-space-pill').forEach(b => b.classList.remove('active'));
-            const pillId = 'pill-space-' + role.toLowerCase();
+            const pillId = 'pill-space-' + targetRole.toLowerCase();
             const pill = document.getElementById(pillId);
             if (pill) pill.classList.add('active');
 
@@ -3428,25 +3452,25 @@
             const userStatus = document.getElementById('user-status-text');
             const dot = document.getElementById('user-dot-status');
 
-            if (role === 'Apprenant') {
+            if (targetRole === 'Apprenant') {
                 if (tApp) tApp.style.display = 'flex';
                 if (userStatus) userStatus.innerText = "Session : yacine.benali (L3 Informatique)";
                 if (dot) dot.style.background = "#2563eb";
                 showScreen('s2');
-                notify("Bienvenue dans votre Espace Apprenant.");
-            } else if (role === 'Enseignant') {
+                notify("Connecté : Espace Apprenant activé.");
+            } else if (targetRole === 'Enseignant') {
                 if (tEns) tEns.style.display = 'flex';
                 if (userStatus) userStatus.innerText = "Session : Dr. Meziani (Responsable Pédagogique)";
                 if (dot) dot.style.background = "#8b5cf6";
                 showScreen('s6');
-                notify("Bienvenue dans votre Espace Enseignant.");
-            } else if (role === 'Admin') {
+                notify("Connecté : Espace Enseignant activé.");
+            } else if (targetRole === 'Admin') {
                 if (tAdm) tAdm.style.display = 'flex';
                 if (userStatus) userStatus.innerText = "Session : Admin Système (DEVA LABS)";
                 if (dot) dot.style.background = "#e11d48";
                 showScreen('s7');
-                notify("Bienvenue dans votre Espace Administrateur.");
-            } else if (role === 'Login') {
+                notify("Connecté : Espace Administrateur activé.");
+            } else if (targetRole === 'Login') {
                 if (tLogin) tLogin.style.display = 'flex';
                 if (userStatus) userStatus.innerText = "Non connecté (Portail)";
                 if (dot) dot.style.background = "#94a3b8";
@@ -3454,9 +3478,15 @@
             }
         }
 
+        function loginAction() {
+            currentLoggedRole = selectedLoginRole;
+            switchSpace(selectedLoginRole, true);
+        }
+
         function logoutAction() {
-            switchSpace('Login');
-            notify("Déconnexion réussie. Vous êtes sur le portail d'authentification.");
+            currentLoggedRole = null;
+            switchSpace('Login', true);
+            notify("Déconnexion réussie. Session fermée.");
         }
 
         function scrollToElement(elId) {
