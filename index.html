@@ -2153,6 +2153,233 @@
             from { width: 100%; }
             to { width: 0%; }
         }
+    
+        /* ========================================================
+           STYLES DES ESPACES DEDIES (APPRENANT, ENSEIGNANT, ADMIN)
+           ======================================================== */
+        .space-nav-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-surface);
+            padding: 4px 6px;
+            border-radius: 999px;
+            border: 1px solid var(--border-default);
+            box-shadow: var(--shadow-sm);
+        }
+        .space-label {
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+            padding: 0 8px;
+            text-transform: uppercase;
+        }
+        .btn-space-pill {
+            background: transparent;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-space-pill:hover {
+            color: var(--text-primary);
+            background: var(--bg-subtle);
+        }
+        .btn-space-pill.active {
+            background: var(--accent-blue);
+            color: #ffffff !important;
+            box-shadow: 0 2px 8px var(--accent-blue-glow);
+        }
+        .btn-space-pill.pill-enseignant.active {
+            background: #8b5cf6 !important;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35);
+        }
+        .btn-space-pill.pill-admin.active {
+            background: #e11d48 !important;
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.35);
+        }
+
+        .user-tag-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-toolbar-logout {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--accent-red-text);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-toolbar-logout:hover {
+            background: var(--accent-red);
+            color: #ffffff;
+        }
+
+        /* VUE ÉCRAN 7 : ESPACE ADMINISTRATEUR */
+        .admin-hero-banner {
+            background: linear-gradient(135deg, rgba(225, 29, 72, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%);
+            border: 1px solid rgba(225, 29, 72, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .admin-hero-left h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .admin-hero-left p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+        .admin-badge-root {
+            background: #e11d48;
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 999px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .admin-stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .widget-admin-red {
+            border-left: 4px solid #e11d48;
+        }
+        .widget-admin-purple {
+            border-left: 4px solid #8b5cf6;
+        }
+        .widget-admin-emerald {
+            border-left: 4px solid #10b981;
+        }
+        .widget-admin-blue {
+            border-left: 4px solid #2563eb;
+        }
+
+        .admin-grid-layout {
+            display: grid;
+            grid-template-columns: 1.6fr 1.2fr;
+            gap: 16px;
+        }
+        .admin-panel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: var(--shadow-sm);
+        }
+        .admin-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-default);
+        }
+        .admin-panel-header h4 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-admin-action {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-default);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+        .btn-admin-action:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+        .btn-admin-primary {
+            background: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+        }
+        .btn-admin-primary:hover {
+            background: var(--accent-blue-hover);
+            color: #ffffff;
+        }
+
+        .role-pill {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+        .role-pill-apprenant {
+            background: rgba(37, 99, 235, 0.15);
+            color: #2563eb;
+        }
+        .role-pill-enseignant {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+        }
+        .role-pill-admin {
+            background: rgba(225, 29, 72, 0.15);
+            color: #e11d48;
+        }
+
+        .audit-console {
+            background: #090d16;
+            color: #38bdf8;
+            font-family: var(--font-mono);
+            font-size: 0.73rem;
+            border-radius: 8px;
+            padding: 10px 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #1e293b;
+            line-height: 1.5;
+        }
+        .audit-line {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .audit-time {
+            color: #64748b;
+        }
+        .audit-tag-auth { color: #34d399; font-weight: 600; }
+        .audit-tag-rule { color: #f59e0b; font-weight: 600; }
+        .audit-tag-eval { color: #38bdf8; font-weight: 600; }
+        .audit-tag-sys  { color: #f43f5e; font-weight: 600; }
+
     </style>
 </head>
 <body>
@@ -2193,6 +2420,20 @@
             </div>
         </div>
         <div class="academic-actions">
+            <!-- Sélecteur d'Espaces Dédiés (Apprenant / Enseignant / Admin) -->
+            <div class="space-nav-bar">
+                <span class="space-label">Espaces :</span>
+                <button class="btn-space-pill active" id="pill-space-apprenant" onclick="switchSpace('Apprenant')">
+                    <span>🎓</span> Espace Apprenant
+                </button>
+                <button class="btn-space-pill pill-enseignant" id="pill-space-enseignant" onclick="switchSpace('Enseignant')">
+                    <span>👨‍🏫</span> Espace Enseignant
+                </button>
+                <button class="btn-space-pill pill-admin" id="pill-space-admin" onclick="switchSpace('Admin')">
+                    <span>⚙️</span> Espace Administrateur
+                </button>
+            </div>
+
             <!-- Bouton Bascule Thème Clair / Sombre -->
             <button class="btn-theme-toggle" onclick="toggleColorTheme()" id="btn-theme">
                 <span>🌓</span> Thème Clair / Sombre
@@ -2232,22 +2473,47 @@
         </div>
 
         <!-- 3. Toolbar de Navigation Épurée -->
+        <!-- 3. Toolbar de Navigation Dédiée par Espace -->
         <div class="swing-toolbar">
-            <div class="view-switcher">
-                <button class="btn-view active" id="btn-tab-s1" onclick="showScreen('s1')"><span class="tab-indicator ind-blue"></span>Connexion</button>
-                <button class="btn-view" id="btn-tab-s2" onclick="showScreen('s2')"><span class="tab-indicator ind-purple"></span>Tableau de bord</button>
+            <!-- Barre pour l'Espace Connexion -->
+            <div class="view-switcher" id="toolbar-s1" style="display:none;">
+                <span style="font-size:0.8rem; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; gap:8px;">
+                    <span class="tab-indicator ind-blue"></span> Portail d'accès central &bull; Identifiez-vous pour ouvrir votre espace dédié
+                </span>
+            </div>
+
+            <!-- Barre réservée à l'Espace Apprenant (Étudiant) -->
+            <div class="view-switcher" id="toolbar-apprenant">
+                <button class="btn-view active" id="btn-tab-s2" onclick="showScreen('s2')"><span class="tab-indicator ind-purple"></span>Tableau de bord (Cursus)</button>
                 <button class="btn-view" id="btn-tab-s3" onclick="showScreen('s3')"><span class="tab-indicator ind-emerald"></span>Cours &amp; Atelier</button>
                 <button class="btn-view" id="btn-tab-s4" onclick="showScreen('s4')"><span class="tab-indicator ind-amber"></span>Évaluation</button>
                 <button class="btn-view" id="btn-tab-s5" onclick="showScreen('s5')"><span class="tab-indicator ind-teal"></span>Relevé de note</button>
-                <button class="btn-view" id="btn-tab-s6" onclick="showScreen('s6')"><span class="tab-indicator ind-fuchsia"></span>Espace Enseignant</button>
             </div>
-            <div class="user-tag">
-                <span class="user-dot"></span>
-                <span id="user-status-text">Session : yacine.benali (L3)</span>
+
+            <!-- Barre réservée à l'Espace Enseignant (Professeur) -->
+            <div class="view-switcher" id="toolbar-enseignant" style="display:none;">
+                <button class="btn-view active" id="btn-tab-s6" onclick="showScreen('s6')"><span class="tab-indicator ind-fuchsia"></span>Tableau de bord Pédagogique</button>
+                <button class="btn-view" onclick="scrollToElement('student-register')"><span class="tab-indicator ind-blue"></span>Suivi des Étudiants</button>
+                <button class="btn-view" onclick="scrollToElement('param-threshold-display')"><span class="tab-indicator ind-teal"></span>Seuil &amp; Règle RG7</button>
+            </div>
+
+            <!-- Barre réservée à l'Espace Administrateur -->
+            <div class="view-switcher" id="toolbar-admin" style="display:none;">
+                <button class="btn-view active" id="btn-tab-s7" onclick="showScreen('s7')"><span class="tab-indicator ind-red" style="background:#e11d48;"></span>Console Système &amp; KPIs</button>
+                <button class="btn-view" onclick="scrollToElement('admin-users-table')"><span class="tab-indicator ind-purple"></span>Gestion des Comptes</button>
+                <button class="btn-view" onclick="scrollToElement('admin-audit-logs')"><span class="tab-indicator ind-emerald"></span>Base SQLite &amp; Audit</button>
+            </div>
+
+            <div class="user-tag-box">
+                <div class="user-tag">
+                    <span class="user-dot" id="user-dot-status"></span>
+                    <span id="user-status-text">Session : yacine.benali (L3)</span>
+                </div>
+                <button class="btn-toolbar-logout" onclick="logoutAction()" title="Fermer la session">🚪 Déconnexion</button>
             </div>
         </div>
 
-        <!-- 4. Contenu des Vues (CardLayout) -->
+        <!-- 4. Contenu<!-- 4. Contenu des Vues (CardLayout) -->
         <div class="window-content">
 
             <!-- FOND ANIMÉ MODERNE INTERNE AUX ÉCRANS (AURORA SUR TOUTES LES VUES) -->
@@ -2583,6 +2849,138 @@
                     </div>
                 </div>
             </section>
+            <!-- ÉCRAN 7 : ESPACE ADMINISTRATEUR (GESTION SYSTÈME & COMPTES) -->
+            <section class="screen-pane" id="s7">
+                <div class="admin-hero-banner">
+                    <div class="admin-hero-left">
+                        <h2>⚙️ Espace Administrateur &bull; Supervision DEVA LABS Studio</h2>
+                        <p>Administration de la plateforme, gestion des comptes apprenants/enseignants et intégrité SQLite (RG1-RG8)</p>
+                    </div>
+                    <div class="admin-badge-root">Accès Root Privilégié</div>
+                </div>
+
+                <!-- 4 Indicateurs Clés Système -->
+                <div class="admin-stats-row">
+                    <div class="stat-widget widget-admin-red">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-body">
+                            <div class="stat-val" id="admin-kpi-users">36</div>
+                            <div class="stat-lbl">Comptes Utilisateurs</div>
+                        </div>
+                    </div>
+                    <div class="stat-widget widget-admin-emerald">
+                        <div class="stat-icon">🗄️</div>
+                        <div class="stat-body">
+                            <div class="stat-val">5.2 Mo</div>
+                            <div class="stat-lbl">Base SQLite (learnweb.db)</div>
+                        </div>
+                    </div>
+                    <div class="stat-widget widget-admin-purple">
+                        <div class="stat-icon">🛡️</div>
+                        <div class="stat-body">
+                            <div class="stat-val">BCrypt</div>
+                            <div class="stat-lbl">Chiffrement &amp; Sécurité</div>
+                        </div>
+                    </div>
+                    <div class="stat-widget widget-admin-blue">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-body">
+                            <div class="stat-val">99.98%</div>
+                            <div class="stat-lbl">Disponibilité Système</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-grid-layout">
+                    <!-- Panneau Gestion des Comptes -->
+                    <div class="admin-panel-card" id="admin-users-table">
+                        <div class="admin-panel-header">
+                            <h4><span>👥</span> Annuaire des Comptes (Apprenants &amp; Enseignants)</h4>
+                            <button class="btn-admin-action btn-admin-primary" onclick="adminCreateUser()">+ Nouvel Utilisateur</button>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="std-table">
+                                <thead>
+                                    <tr>
+                                        <th>Identifiant</th>
+                                        <th>Nom &amp; Prénom</th>
+                                        <th>Rôle</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>yacine.benali@univ.dz</code></td>
+                                        <td><strong>Yacine Benali</strong></td>
+                                        <td><span class="role-pill role-pill-apprenant">Apprenant</span></td>
+                                        <td><span style="color:#10b981; font-weight:600;">Actif</span></td>
+                                        <td>
+                                            <button class="btn-admin-action" onclick="adminResetPwd('Yacine Benali')">MDP</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>amina.khelifi@univ.dz</code></td>
+                                        <td><strong>Amina Khelifi</strong></td>
+                                        <td><span class="role-pill role-pill-apprenant">Apprenant</span></td>
+                                        <td><span style="color:#10b981; font-weight:600;">Actif</span></td>
+                                        <td>
+                                            <button class="btn-admin-action" onclick="adminResetPwd('Amina Khelifi')">MDP</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>karim.taleb@univ.dz</code></td>
+                                        <td><strong>Karim Taleb</strong></td>
+                                        <td><span class="role-pill role-pill-apprenant">Apprenant</span></td>
+                                        <td><span style="color:#10b981; font-weight:600;">Actif</span></td>
+                                        <td>
+                                            <button class="btn-admin-action" onclick="adminResetPwd('Karim Taleb')">MDP</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>prof.meziani@univ.dz</code></td>
+                                        <td><strong>Dr. Meziani</strong></td>
+                                        <td><span class="role-pill role-pill-enseignant">Enseignant</span></td>
+                                        <td><span style="color:#10b981; font-weight:600;">Actif</span></td>
+                                        <td>
+                                            <button class="btn-admin-action" onclick="adminResetPwd('Dr. Meziani')">MDP</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>admin.system@univ.dz</code></td>
+                                        <td><strong>Admin Système</strong></td>
+                                        <td><span class="role-pill role-pill-admin">Admin</span></td>
+                                        <td><span style="color:#10b981; font-weight:600;">Superuser</span></td>
+                                        <td>
+                                            <span style="font-size:0.75rem; color:var(--text-tertiary);">&mdash;</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Panneau Base de données & Journal d'Audit -->
+                    <div class="admin-panel-card" id="admin-audit-logs">
+                        <div class="admin-panel-header">
+                            <h4><span>📜</span> Journal d'Audit Système en Temps Réel</h4>
+                            <button class="btn-admin-action" onclick="adminTriggerBackup()">💾 Sauvegarder DB</button>
+                        </div>
+                        <div class="audit-console" id="audit-log-stream">
+                            <div class="audit-line"><span class="audit-time">[12:15:02]</span> <span class="audit-tag-auth">[AUTH]</span> yacine.benali connecté (Apprenant)</div>
+                            <div class="audit-line"><span class="audit-time">[12:12:44]</span> <span class="audit-tag-rule">[RG7]</span> prof.meziani a configuré le seuil à 70%</div>
+                            <div class="audit-line"><span class="audit-time">[12:10:18]</span> <span class="audit-tag-eval">[EVAL]</span> yacine.benali soumis QCM L2 (Note: 80% - Validé)</div>
+                            <div class="audit-line"><span class="audit-time">[12:00:00]</span> <span class="audit-tag-sys">[BACKUP]</span> learnweb.db sauvegardé avec succès</div>
+                            <div class="audit-line"><span class="audit-time">[11:54:10]</span> <span class="audit-tag-auth">[AUTH]</span> admin.system connecté (Console Admin)</div>
+                        </div>
+                        <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--text-secondary);">
+                            <span>Connexions simultanées : 4</span>
+                            <span style="color:#10b981;">● Intégrité SQLite : OK</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
 
         </div>
 
@@ -2722,12 +3120,13 @@
             if (tabBtn) tabBtn.classList.add('active');
 
             const names = {
-                s1: "Authentification",
-                s2: "Tableau de bord & Parcours",
-                s3: "Atelier Pédagogique (JSplitPane)",
-                s4: "Test d'Évaluation Chronométré",
-                s5: "Relevé de Délibération",
-                s6: "Espace Gestion Enseignant"
+                s1: "Portail d'Authentification",
+                s2: "Espace Apprenant &bull; Tableau de bord",
+                s3: "Espace Apprenant &bull; Cours &amp; Atelier",
+                s4: "Espace Apprenant &bull; Évaluation",
+                s5: "Espace Apprenant &bull; Relevé de notes",
+                s6: "Espace Enseignant &bull; Pilotage Pédagogique",
+                s7: "Espace Administrateur &bull; Supervision Système"
             };
             document.getElementById('caption-route').innerText = names[id] || "Application";
         }
@@ -2741,9 +3140,20 @@
             else input.value = "admin.system@univ.dz";
         }
 
+        let selectedLoginRole = 'Apprenant';
+
+        function pickRole(btn, role) {
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedLoginRole = role;
+            const input = document.getElementById('auth-login');
+            if (role === 'Apprenant') input.value = "yacine.benali@univ.dz";
+            else if (role === 'Enseignant') input.value = "prof.meziani@univ.dz";
+            else input.value = "admin.system@univ.dz";
+        }
+
         function loginAction() {
-            notify("Session ouverte avec succès.");
-            showScreen('s2');
+            switchSpace(selectedLoginRole);
         }
 
         function openLesson(lvl) {
@@ -2989,6 +3399,96 @@
 
         // Init
         showScreen('s1');
+    
+        // ========================================================
+        // GESTION MULTI-ESPACES : APPRENANT / ENSEIGNANT / ADMIN
+        // ========================================================
+        let currentActiveSpace = 'Apprenant';
+
+        function switchSpace(role) {
+            currentActiveSpace = role;
+
+            // Mise à jour des boutons de navigation d'espaces (Pills)
+            document.querySelectorAll('.btn-space-pill').forEach(b => b.classList.remove('active'));
+            const pillId = 'pill-space-' + role.toLowerCase();
+            const pill = document.getElementById(pillId);
+            if (pill) pill.classList.add('active');
+
+            // Cacher toutes les toolbars
+            const tLogin = document.getElementById('toolbar-s1');
+            const tApp = document.getElementById('toolbar-apprenant');
+            const tEns = document.getElementById('toolbar-enseignant');
+            const tAdm = document.getElementById('toolbar-admin');
+            if (tLogin) tLogin.style.display = 'none';
+            if (tApp) tApp.style.display = 'none';
+            if (tEns) tEns.style.display = 'none';
+            if (tAdm) tAdm.style.display = 'none';
+
+            // Affichage spécifique par espace
+            const userStatus = document.getElementById('user-status-text');
+            const dot = document.getElementById('user-dot-status');
+
+            if (role === 'Apprenant') {
+                if (tApp) tApp.style.display = 'flex';
+                if (userStatus) userStatus.innerText = "Session : yacine.benali (L3 Informatique)";
+                if (dot) dot.style.background = "#2563eb";
+                showScreen('s2');
+                notify("Bienvenue dans votre Espace Apprenant.");
+            } else if (role === 'Enseignant') {
+                if (tEns) tEns.style.display = 'flex';
+                if (userStatus) userStatus.innerText = "Session : Dr. Meziani (Responsable Pédagogique)";
+                if (dot) dot.style.background = "#8b5cf6";
+                showScreen('s6');
+                notify("Bienvenue dans votre Espace Enseignant.");
+            } else if (role === 'Admin') {
+                if (tAdm) tAdm.style.display = 'flex';
+                if (userStatus) userStatus.innerText = "Session : Admin Système (DEVA LABS)";
+                if (dot) dot.style.background = "#e11d48";
+                showScreen('s7');
+                notify("Bienvenue dans votre Espace Administrateur.");
+            } else if (role === 'Login') {
+                if (tLogin) tLogin.style.display = 'flex';
+                if (userStatus) userStatus.innerText = "Non connecté (Portail)";
+                if (dot) dot.style.background = "#94a3b8";
+                showScreen('s1');
+            }
+        }
+
+        function logoutAction() {
+            switchSpace('Login');
+            notify("Déconnexion réussie. Vous êtes sur le portail d'authentification.");
+        }
+
+        function scrollToElement(elId) {
+            const el = document.getElementById(elId);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function adminCreateUser() {
+            const name = prompt("Nom et prénom du nouvel utilisateur :");
+            if (!name) return;
+            const email = prompt("Email académique :", name.toLowerCase().replace(' ', '.') + "@univ.dz");
+            notify(`Compte créé avec succès pour ${name} (${email}).`);
+            const consoleEl = document.getElementById('audit-log-stream');
+            if (consoleEl) {
+                const now = new Date().toTimeString().split(' ')[0];
+                consoleEl.innerHTML = `<div class="audit-line"><span class="audit-time">[${now}]</span> <span class="audit-tag-sys">[ADMIN]</span> Nouveau compte créé : ${email}</div>` + consoleEl.innerHTML;
+            }
+        }
+
+        function adminResetPwd(userName) {
+            notify(`Mot de passe réinitialisé pour ${userName}. Email d'instructions envoyé.`);
+        }
+
+        function adminTriggerBackup() {
+            notify("Sauvegarde de learnweb.db effectuée avec succès (5.2 Mo).");
+            const consoleEl = document.getElementById('audit-log-stream');
+            if (consoleEl) {
+                const now = new Date().toTimeString().split(' ')[0];
+                consoleEl.innerHTML = `<div class="audit-line"><span class="audit-time">[${now}]</span> <span class="audit-tag-sys">[BACKUP]</span> Sauvegarde manuelle réussie : learnweb.db_${now.replace(/:/g,'-')}.bak</div>` + consoleEl.innerHTML;
+            }
+        }
+
     </script>
 </body>
 </html>
