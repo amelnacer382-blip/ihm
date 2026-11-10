@@ -25,6 +25,29 @@ public class DevALabsApp extends JFrame {
     public static final String CARD_EXAM      = "EXAM";
     public static final String CARD_GRADE     = "GRADE";
     public static final String CARD_TEACHER   = "TEACHER";
+    public static final String CARD_ADMIN     = "ADMIN";
+
+    // Espaces Dédiés
+    public static final String SPACE_APPRENANT  = "APPRENANT";
+    public static final String SPACE_ENSEIGNANT = "ENSEIGNANT";
+    public static final String SPACE_ADMIN      = "ADMIN";
+    public static final String SPACE_LOGIN      = "LOGIN";
+
+    public static final Color COLOR_BG_APP     = new Color(241, 245, 249);
+    public static final Color COLOR_SUCCESS    = new Color(16, 185, 129);
+    public static final Color COLOR_DANGER     = new Color(239, 68, 68);
+
+    private String currentSpace = SPACE_APPRENANT;
+    private String selectedLoginRole = SPACE_APPRENANT;
+    private CardLayout toolBarCardLayout;
+    private JPanel toolBarCardPanel;
+    private JLabel lblUserSessionTag;
+    private JPanel dotSessionStatus;
+    private JButton btnSpacePillApprenant;
+    private JButton btnSpacePillEnseignant;
+    private JButton btnSpacePillAdmin;
+    private DefaultTableModel adminUsersModel;
+    private JTextArea adminAuditLogArea;
 
     // --- Palette de Couleurs Modernes DEVA LABS ---
     public static final Color COLOR_BG_DARK    = new Color(15, 23, 42);     // Slate 900
@@ -218,40 +241,176 @@ public class DevALabsApp extends JFrame {
     // ========================================================================
     // 2. JToolBar de Navigation & Sélecteur d'Écrans
     // ========================================================================
+        // ========================================================================
+    // 2. Navigation Multi-Espaces Dédiés (Apprenant, Enseignant, Administrateur)
+    // ========================================================================
     private void initToolBar() {
-        JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);
-        toolBar.setBackground(Color.WHITE);
-        toolBar.setBorder(new EmptyBorder(8, 14, 8, 14));
-        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        JPanel headerNorthPanel = new JPanel(new BorderLayout(0, 0));
+        headerNorthPanel.setBackground(Color.WHITE);
+        headerNorthPanel.setBorder(new MatteBorder(0, 0, 1, 0, COLOR_BORDER));
 
-        // Boutons de navigation
-        JButton btnNav1 = createNavButton("1. Connexion", CARD_AUTH, "Authentification");
-        JButton btnNav2 = createNavButton("2. Tableau de bord", CARD_DASHBOARD, "Tableau de bord des Niveaux");
-        JButton btnNav3 = createNavButton("3. Cours & Atelier", CARD_WORKSHOP, "Cours & Atelier Pratique");
-        JButton btnNav4 = createNavButton("4. Évaluation", CARD_EXAM, "Évaluation Certifiante");
-        JButton btnNav5 = createNavButton("5. Relevé de note", CARD_GRADE, "Relevé de Délibération");
-        JButton btnNav6 = createNavButton("6. Espace Enseignant", CARD_TEACHER, "Espace Enseignant");
+        // --- BARRE SUPÉRIEURE : SÉLECTEUR D'ESPACES DÉDIÉS ---
+        JPanel topSpaceSelectorBar = new JPanel(new BorderLayout(10, 0));
+        topSpaceSelectorBar.setBackground(COLOR_BG_SURFACE);
+        topSpaceSelectorBar.setBorder(new EmptyBorder(8, 14, 8, 14));
 
-        toolBar.add(btnNav1);
-        toolBar.add(btnNav2);
-        toolBar.add(btnNav3);
-        toolBar.add(btnNav4);
-        toolBar.add(btnNav5);
-        toolBar.add(btnNav6);
+        JPanel leftSpacesGroup = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        leftSpacesGroup.setBackground(COLOR_BG_SURFACE);
 
-        // Séparateur élastique vers l'étiquette utilisateur
-        toolBar.add(Box.createHorizontalGlue());
+        JLabel lblEsp = new JLabel("ESPACES DÉDIÉS :");
+        lblEsp.setFont(new Font("Segoe UI", Font.BOLD, 10));
+        lblEsp.setForeground(COLOR_TEXT_MUTED);
+        leftSpacesGroup.add(lblEsp);
 
-        JButton btnErgoQuick = new JButton("ℹ Fiche Ergonomique (Bastien & Scapin)");
+        btnSpacePillApprenant = createSpacePill("🎓 Espace Apprenant", SPACE_APPRENANT, COLOR_PRIMARY);
+        btnSpacePillEnseignant = createSpacePill("👨‍🏫 Espace Enseignant", SPACE_ENSEIGNANT, new Color(139, 92, 246));
+        btnSpacePillAdmin = createSpacePill("⚙️ Espace Administrateur", SPACE_ADMIN, new Color(225, 29, 72));
+
+        btnSpacePillApprenant.addActionListener(e -> switchSpace(SPACE_APPRENANT));
+        btnSpacePillEnseignant.addActionListener(e -> switchSpace(SPACE_ENSEIGNANT));
+        btnSpacePillAdmin.addActionListener(e -> switchSpace(SPACE_ADMIN));
+
+        leftSpacesGroup.add(btnSpacePillApprenant);
+        leftSpacesGroup.add(btnSpacePillEnseignant);
+        leftSpacesGroup.add(btnSpacePillAdmin);
+
+        topSpaceSelectorBar.add(leftSpacesGroup, BorderLayout.WEST);
+
+        JPanel rightInfoGroup = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        rightInfoGroup.setBackground(COLOR_BG_SURFACE);
+
+        dotSessionStatus = new JPanel();
+        dotSessionStatus.setPreferredSize(new Dimension(8, 8));
+        dotSessionStatus.setBackground(COLOR_SUCCESS);
+
+        lblUserSessionTag = new JLabel("Session : yacine.benali (L3 Informatique)");
+        lblUserSessionTag.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        lblUserSessionTag.setForeground(COLOR_TEXT_MAIN);
+
+        JButton btnLogout = new JButton("🚪 Déconnexion");
+        btnLogout.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        btnLogout.setBackground(new Color(254, 242, 242));
+        btnLogout.setForeground(COLOR_DANGER);
+        btnLogout.setFocusPainted(false);
+        btnLogout.setBorder(new CompoundBorder(new LineBorder(new Color(254, 202, 202), 1, true), new EmptyBorder(4, 8, 4, 8)));
+        btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnLogout.addActionListener(e -> logoutAction());
+
+        JButton btnErgoQuick = new JButton("ℹ️ Bastien & Scapin");
         btnErgoQuick.setFont(new Font("Segoe UI", Font.BOLD, 11));
         btnErgoQuick.setBackground(new Color(239, 246, 255));
         btnErgoQuick.setForeground(COLOR_PRIMARY);
         btnErgoQuick.setFocusPainted(false);
+        btnErgoQuick.setBorder(new CompoundBorder(new LineBorder(new Color(191, 219, 254), 1, true), new EmptyBorder(4, 8, 4, 8)));
+        btnErgoQuick.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnErgoQuick.addActionListener(e -> openErgonomicsDialog());
-        toolBar.add(btnErgoQuick);
 
-        add(toolBar, BorderLayout.NORTH);
+        rightInfoGroup.add(dotSessionStatus);
+        rightInfoGroup.add(lblUserSessionTag);
+        rightInfoGroup.add(btnLogout);
+        rightInfoGroup.add(btnErgoQuick);
+
+        topSpaceSelectorBar.add(rightInfoGroup, BorderLayout.EAST);
+        headerNorthPanel.add(topSpaceSelectorBar, BorderLayout.NORTH);
+
+        // --- BARRE INFÉRIEURE : TOOLBARS DÉDIÉES PAR ESPACE (CARDLAYOUT) ---
+        toolBarCardLayout = new CardLayout();
+        toolBarCardPanel = new JPanel(toolBarCardLayout);
+        toolBarCardPanel.setBackground(Color.WHITE);
+        toolBarCardPanel.setBorder(new EmptyBorder(6, 14, 6, 14));
+
+        // 1. Toolbar Apprenant
+        JPanel tbApp = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        tbApp.setBackground(Color.WHITE);
+        tbApp.add(createNavButton("📊 Tableau de bord (Cursus)", CARD_DASHBOARD, "Espace Apprenant • Cursus"));
+        tbApp.add(createNavButton("💻 Cours & Atelier", CARD_WORKSHOP, "Espace Apprenant • Atelier Pratique"));
+        tbApp.add(createNavButton("📝 Évaluation (QCM)", CARD_EXAM, "Espace Apprenant • Évaluation"));
+        tbApp.add(createNavButton("🏆 Relevé de note", CARD_GRADE, "Espace Apprenant • Relevé"));
+
+        // 2. Toolbar Enseignant
+        JPanel tbEns = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        tbEns.setBackground(Color.WHITE);
+        tbEns.add(createNavButton("📊 Tableau de bord Pédagogique", CARD_TEACHER, "Espace Enseignant • Pilotage"));
+        JButton btnEnsFollow = createNavButton("📋 Suivi des Étudiants (JTable)", CARD_TEACHER, "Espace Enseignant • Promotion");
+        JButton btnEnsThresh = createNavButton("⚙️ Seuil & Règle RG7", CARD_TEACHER, "Espace Enseignant • Paramétrage");
+        tbEns.add(btnEnsFollow);
+        tbEns.add(btnEnsThresh);
+
+        // 3. Toolbar Admin
+        JPanel tbAdm = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        tbAdm.setBackground(Color.WHITE);
+        tbAdm.add(createNavButton("⚙️ Console Supervision & KPIs", CARD_ADMIN, "Espace Administrateur • Supervision"));
+        tbAdm.add(createNavButton("👥 Gestion des Comptes", CARD_ADMIN, "Espace Administrateur • Comptes"));
+        tbAdm.add(createNavButton("🗄️ Base SQLite & Audit", CARD_ADMIN, "Espace Administrateur • Base de données"));
+
+        // 4. Toolbar Login
+        JPanel tbLog = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        tbLog.setBackground(Color.WHITE);
+        JLabel lblLogMsg = new JLabel("Portail central d'authentification • Sélectionnez votre espace de travail pour vous connecter");
+        lblLogMsg.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblLogMsg.setForeground(COLOR_TEXT_MUTED);
+        tbLog.add(lblLogMsg);
+
+        toolBarCardPanel.add(tbApp, SPACE_APPRENANT);
+        toolBarCardPanel.add(tbEns, SPACE_ENSEIGNANT);
+        toolBarCardPanel.add(tbAdm, SPACE_ADMIN);
+        toolBarCardPanel.add(tbLog, SPACE_LOGIN);
+
+        headerNorthPanel.add(toolBarCardPanel, BorderLayout.SOUTH);
+        add(headerNorthPanel, BorderLayout.NORTH);
+    }
+
+    private JButton createSpacePill(String title, String spaceId, Color activeColor) {
+        JButton btn = new JButton(title);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setBackground(spaceId.equals(currentSpace) ? activeColor : COLOR_BG_SURFACE);
+        btn.setForeground(spaceId.equals(currentSpace) ? Color.WHITE : COLOR_TEXT_MAIN);
+        btn.setFocusPainted(false);
+        btn.setBorder(new CompoundBorder(new LineBorder(COLOR_BORDER, 1, true), new EmptyBorder(5, 12, 5, 12)));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return btn;
+    }
+
+    public void switchSpace(String space) {
+        this.currentSpace = space;
+
+        // Met à jour l'apparence des boutons de bascule d'espace
+        btnSpacePillApprenant.setBackground(space.equals(SPACE_APPRENANT) ? COLOR_PRIMARY : COLOR_BG_SURFACE);
+        btnSpacePillApprenant.setForeground(space.equals(SPACE_APPRENANT) ? Color.WHITE : COLOR_TEXT_MAIN);
+
+        btnSpacePillEnseignant.setBackground(space.equals(SPACE_ENSEIGNANT) ? new Color(139, 92, 246) : COLOR_BG_SURFACE);
+        btnSpacePillEnseignant.setForeground(space.equals(SPACE_ENSEIGNANT) ? Color.WHITE : COLOR_TEXT_MAIN);
+
+        btnSpacePillAdmin.setBackground(space.equals(SPACE_ADMIN) ? new Color(225, 29, 72) : COLOR_BG_SURFACE);
+        btnSpacePillAdmin.setForeground(space.equals(SPACE_ADMIN) ? Color.WHITE : COLOR_TEXT_MAIN);
+
+        // Affiche la toolbar dédiée
+        toolBarCardLayout.show(toolBarCardPanel, space);
+
+        if (space.equals(SPACE_APPRENANT)) {
+            lblUserSessionTag.setText("Session : yacine.benali (L3 Informatique)");
+            dotSessionStatus.setBackground(COLOR_PRIMARY);
+            showCard(CARD_DASHBOARD, "Espace Apprenant • Cursus");
+        } else if (space.equals(SPACE_ENSEIGNANT)) {
+            lblUserSessionTag.setText("Session : Dr. Meziani (Responsable Pédagogique)");
+            dotSessionStatus.setBackground(new Color(139, 92, 246));
+            showCard(CARD_TEACHER, "Espace Enseignant • Pilotage Pédagogique");
+        } else if (space.equals(SPACE_ADMIN)) {
+            lblUserSessionTag.setText("Session : Admin Système (DEVA LABS)");
+            dotSessionStatus.setBackground(new Color(225, 29, 72));
+            showCard(CARD_ADMIN, "Espace Administrateur • Supervision");
+        } else if (space.equals(SPACE_LOGIN)) {
+            lblUserSessionTag.setText("Non authentifié");
+            dotSessionStatus.setBackground(COLOR_TEXT_MUTED);
+            showCard(CARD_AUTH, "Portail d'Authentification");
+        }
+    }
+
+    private void logoutAction() {
+        switchSpace(SPACE_LOGIN);
+        JOptionPane.showMessageDialog(this, 
+            "Déconnexion réussie. Vous êtes redirigé vers le portail d'authentification.", 
+            "Déconnexion • DEVA LABS", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private JButton createNavButton(String label, String cardId, String routeTitle) {
@@ -283,6 +442,7 @@ public class DevALabsApp extends JFrame {
         mainContainer.add(buildExamCard(), CARD_EXAM);
         mainContainer.add(buildGradeCard(), CARD_GRADE);
         mainContainer.add(buildTeacherCard(), CARD_TEACHER);
+        mainContainer.add(buildAdminCard(), CARD_ADMIN);
 
         add(mainContainer, BorderLayout.CENTER);
     }
@@ -331,20 +491,23 @@ public class DevALabsApp extends JFrame {
         rBtn3.setBackground(COLOR_BG_SURFACE);
 
         rBtn1.addActionListener(e -> {
+            selectedLoginRole = SPACE_APPRENANT;
             tfLogin.setText("yacine.benali@univ.dz");
             rBtn1.setBackground(COLOR_PRIMARY); rBtn1.setForeground(Color.WHITE);
             rBtn2.setBackground(COLOR_BG_SURFACE); rBtn2.setForeground(COLOR_TEXT_MAIN);
             rBtn3.setBackground(COLOR_BG_SURFACE); rBtn3.setForeground(COLOR_TEXT_MAIN);
         });
         rBtn2.addActionListener(e -> {
+            selectedLoginRole = SPACE_ENSEIGNANT;
             tfLogin.setText("prof.meziani@univ.dz");
-            rBtn2.setBackground(COLOR_PRIMARY); rBtn2.setForeground(Color.WHITE);
+            rBtn2.setBackground(new Color(139, 92, 246)); rBtn2.setForeground(Color.WHITE);
             rBtn1.setBackground(COLOR_BG_SURFACE); rBtn1.setForeground(COLOR_TEXT_MAIN);
             rBtn3.setBackground(COLOR_BG_SURFACE); rBtn3.setForeground(COLOR_TEXT_MAIN);
         });
         rBtn3.addActionListener(e -> {
+            selectedLoginRole = SPACE_ADMIN;
             tfLogin.setText("admin.system@univ.dz");
-            rBtn3.setBackground(COLOR_PRIMARY); rBtn3.setForeground(Color.WHITE);
+            rBtn3.setBackground(new Color(225, 29, 72)); rBtn3.setForeground(Color.WHITE);
             rBtn1.setBackground(COLOR_BG_SURFACE); rBtn1.setForeground(COLOR_TEXT_MAIN);
             rBtn2.setBackground(COLOR_BG_SURFACE); rBtn2.setForeground(COLOR_TEXT_MAIN);
         });
@@ -371,9 +534,10 @@ public class DevALabsApp extends JFrame {
         btnLogin.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnLogin.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Session ouverte avec succès pour : " + tfLogin.getText(),
-                "Connexion Réussie", JOptionPane.INFORMATION_MESSAGE);
-            showCard(CARD_DASHBOARD, "Tableau de bord des Niveaux");
+            JOptionPane.showMessageDialog(this, "Session ouverte avec succès pour : " + tfLogin.getText() + 
+                " Accès accordé à l'espace dédié.",
+                "Connexion Réussie • DEVA LABS", JOptionPane.INFORMATION_MESSAGE);
+            switchSpace(selectedLoginRole);
         });
 
         card.add(title);
@@ -1307,4 +1471,170 @@ public class DevALabsApp extends JFrame {
             app.setVisible(true);
         });
     }
+
+    // ========================================================================
+    // 7. ÉCRAN 7 : ESPACE ADMINISTRATEUR (GESTION SYSTÈME & COMPTES)
+    // ========================================================================
+    private JPanel buildAdminCard() {
+        JPanel root = new JPanel(new BorderLayout(0, 16));
+        root.setBackground(COLOR_BG_APP);
+        root.setBorder(new EmptyBorder(16, 20, 20, 20));
+
+        // Bannière Hero Admin
+        JPanel hero = new JPanel(new BorderLayout());
+        hero.setBackground(new Color(254, 242, 242));
+        hero.setBorder(new CompoundBorder(
+            new LineBorder(new Color(254, 202, 202), 1, true),
+            new EmptyBorder(16, 20, 16, 20)
+        ));
+
+        JPanel heroLeft = new JPanel(new GridLayout(2, 1, 0, 4));
+        heroLeft.setOpaque(false);
+        JLabel title = new JLabel("⚙️ Espace Administrateur • Supervision Globale DEVA LABS");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        title.setForeground(new Color(159, 18, 57));
+        JLabel desc = new JLabel("Supervision des comptes utilisateurs, intégrité de la base SQLite (learnweb.db) et sécurité des évaluations.");
+        desc.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        desc.setForeground(COLOR_TEXT_MUTED);
+        heroLeft.add(title);
+        heroLeft.add(desc);
+
+        JLabel rootBadge = new JLabel("ACCÈS ROOT PRIVILÉGIÉ", SwingConstants.CENTER);
+        rootBadge.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        rootBadge.setOpaque(true);
+        rootBadge.setBackground(new Color(225, 29, 72));
+        rootBadge.setForeground(Color.WHITE);
+        rootBadge.setBorder(new EmptyBorder(6, 14, 6, 14));
+
+        hero.add(heroLeft, BorderLayout.WEST);
+        hero.add(rootBadge, BorderLayout.EAST);
+        root.add(hero, BorderLayout.NORTH);
+
+        // Centre : KPIs + 2 panneaux (Comptes & Logs)
+        JPanel centerPanel = new JPanel(new BorderLayout(0, 16));
+        centerPanel.setOpaque(false);
+
+        // 4 KPIs
+        JPanel kpiGrid = new JPanel(new GridLayout(1, 4, 12, 0));
+        kpiGrid.setOpaque(false);
+        kpiGrid.add(createStatCard("36", "Comptes Utilisateurs", new Color(225, 29, 72)));
+        kpiGrid.add(createStatCard("5.2 Mo", "Base SQLite (learnweb.db)", COLOR_SUCCESS));
+        kpiGrid.add(createStatCard("BCrypt", "Sécurité & Chiffrement", new Color(139, 92, 246)));
+        kpiGrid.add(createStatCard("99.98%", "Disponibilité Système", COLOR_PRIMARY));
+        centerPanel.add(kpiGrid, BorderLayout.NORTH);
+
+        // Panneau découpé : Table des utilisateurs à gauche, Audit logs à droite
+        JSplitPane splitAdmin = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitAdmin.setResizeWeight(0.60);
+        splitAdmin.setBorder(null);
+
+        // Gauche : Table des comptes
+        JPanel usersCard = new JPanel(new BorderLayout(0, 10));
+        usersCard.setBackground(Color.WHITE);
+        usersCard.setBorder(new CompoundBorder(
+            new LineBorder(COLOR_BORDER, 1, true),
+            new EmptyBorder(12, 14, 12, 14)
+        ));
+
+        JPanel uHeader = new JPanel(new BorderLayout());
+        uHeader.setOpaque(false);
+        JLabel lblUTitle = new JLabel("👥 Annuaire des Utilisateurs (Apprenants & Enseignants)");
+        lblUTitle.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblUTitle.setForeground(COLOR_TEXT_MAIN);
+
+        JButton btnAddUser = new JButton("+ Nouvel Utilisateur");
+        btnAddUser.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        btnAddUser.setBackground(COLOR_PRIMARY);
+        btnAddUser.setForeground(Color.WHITE);
+        btnAddUser.setFocusPainted(false);
+        btnAddUser.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnAddUser.addActionListener(e -> {
+            String nom = JOptionPane.showInputDialog(this, "Nom et prénom du nouvel utilisateur :", "Créer un Compte", JOptionPane.PLAIN_MESSAGE);
+            if (nom != null && !nom.trim().isEmpty()) {
+                String mail = nom.toLowerCase().replaceAll("\s+", ".") + "@univ.dz";
+                adminUsersModel.addRow(new Object[]{mail, nom, "Apprenant", "Actif", "Réinitialiser"});
+                addAdminAuditLog("[ADMIN] Nouveau compte créé : " + mail);
+                JOptionPane.showMessageDialog(this, "Utilisateur créé avec succès : " + nom + " (" + mail + ")");
+            }
+        });
+        uHeader.add(lblUTitle, BorderLayout.WEST);
+        uHeader.add(btnAddUser, BorderLayout.EAST);
+        usersCard.add(uHeader, BorderLayout.NORTH);
+
+        String[] cols = {"Identifiant", "Nom & Prénom", "Rôle", "Statut", "Action"};
+        Object[][] data = {
+            {"yacine.benali@univ.dz", "Yacine Benali", "Apprenant", "Actif", "Réinitialiser"},
+            {"amina.khelifi@univ.dz", "Amina Khelifi", "Apprenant", "Actif", "Réinitialiser"},
+            {"karim.taleb@univ.dz", "Karim Taleb", "Apprenant", "Actif", "Réinitialiser"},
+            {"prof.meziani@univ.dz", "Dr. Meziani", "Enseignant", "Actif", "Réinitialiser"},
+            {"admin.system@univ.dz", "Admin Système", "Administrateur", "Superuser", "—"}
+        };
+        adminUsersModel = new DefaultTableModel(data, cols) {
+            @Override
+            public boolean isCellEditable(int row, int col) { return false; }
+        };
+        JTable adminTable = new JTable(adminUsersModel);
+        adminTable.setRowHeight(30);
+        adminTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        adminTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        adminTable.getTableHeader().setBackground(COLOR_BG_APP);
+        usersCard.add(new JScrollPane(adminTable), BorderLayout.CENTER);
+
+        // Droite : Console d'audit
+        JPanel logsCard = new JPanel(new BorderLayout(0, 10));
+        logsCard.setBackground(Color.WHITE);
+        logsCard.setBorder(new CompoundBorder(
+            new LineBorder(COLOR_BORDER, 1, true),
+            new EmptyBorder(12, 14, 12, 14)
+        ));
+
+        JPanel lHeader = new JPanel(new BorderLayout());
+        lHeader.setOpaque(false);
+        JLabel lblLTitle = new JLabel("📜 Journal d'Audit Système (SQLite & Sécurité)");
+        lblLTitle.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblLTitle.setForeground(COLOR_TEXT_MAIN);
+
+        JButton btnBackup = new JButton("💾 Sauvegarde DB");
+        btnBackup.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        btnBackup.setBackground(COLOR_SUCCESS);
+        btnBackup.setForeground(Color.WHITE);
+        btnBackup.setFocusPainted(false);
+        btnBackup.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnBackup.addActionListener(e -> {
+            addAdminAuditLog("[BACKUP] Sauvegarde manuelle exécutée : learnweb.db_backup.sql (5.2 Mo)");
+            JOptionPane.showMessageDialog(this, "Base SQLite sauvegardée avec intégrité complète.", "Sauvegarde Réussie", JOptionPane.INFORMATION_MESSAGE);
+        });
+        lHeader.add(lblLTitle, BorderLayout.WEST);
+        lHeader.add(btnBackup, BorderLayout.EAST);
+        logsCard.add(lHeader, BorderLayout.NORTH);
+
+        adminAuditLogArea = new JTextArea();
+        adminAuditLogArea.setFont(new Font("Consolas", Font.PLAIN, 11));
+        adminAuditLogArea.setBackground(new Color(15, 23, 42));
+        adminAuditLogArea.setForeground(new Color(56, 189, 248));
+        adminAuditLogArea.setEditable(false);
+        adminAuditLogArea.setText(
+            "[12:15:02] [AUTH] yacine.benali@univ.dz connecté (Espace Apprenant)\n" +
+            "[12:12:44] [RG7] prof.meziani a configuré le seuil d'admission à 70%\n" +
+            "[12:10:18] [EVAL] yacine.benali soumis QCM L2 (Note: 80% - Validé)\n" +
+            "[12:00:00] [BACKUP] Sauvegarde automatique learnweb.db réussie (5.2 Mo)\n" +
+            "[11:54:10] [AUTH] admin.system connecté (Console Supervision)\n"
+        );
+        logsCard.add(new JScrollPane(adminAuditLogArea), BorderLayout.CENTER);
+
+        splitAdmin.setLeftComponent(usersCard);
+        splitAdmin.setRightComponent(logsCard);
+        centerPanel.add(splitAdmin, BorderLayout.CENTER);
+
+        root.add(centerPanel, BorderLayout.CENTER);
+        return root;
+    }
+
+    private void addAdminAuditLog(String logMsg) {
+        if (adminAuditLogArea != null) {
+            String time = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+            adminAuditLogArea.setText("[" + time + "] " + logMsg + "\n" + adminAuditLogArea.getText());
+        }
+    }
+
 }
