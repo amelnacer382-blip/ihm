@@ -1,0 +1,2994 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnWeb - Environnement d'Apprentissage Pédagogique par Niveaux</title>
+    <style>
+        /* PALETTE MODERNE LUMINEUSE & ÉLÉGANTE (PAR DÉFAUT) */
+        :root {
+            --bg-body: #f1f5f9;
+            --bg-surface: #ffffff;
+            --bg-subtle: #f8fafc;
+            --bg-card: #ffffff;
+            --border-default: #e2e8f0;
+            --border-muted: #f1f5f9;
+            --border-active: #2563eb;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --accent-blue: #2563eb;
+            --accent-blue-hover: #1d4ed8;
+            --accent-blue-light: #eff6ff;
+            --accent-blue-glow: rgba(37, 99, 235, 0.18);
+            --accent-green: #10b981;
+            --accent-green-hover: #059669;
+            --accent-green-light: #ecfdf5;
+            --accent-green-text: #047857;
+            --accent-red: #ef4444;
+            --accent-red-light: #fef2f2;
+            --accent-red-text: #b91c1c;
+            --accent-amber: #f59e0b;
+            --editor-bg: #0f172a;
+            --editor-text: #38bdf8;
+            --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            --font-mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+            --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        /* Support du Mode Sombre (optionnel en 1 clic) */
+        [data-theme="dark"] {
+            --bg-body: #0b0f17;
+            --bg-surface: #131924;
+            --bg-subtle: #1a2232;
+            --bg-card: #131924;
+            --border-default: #243046;
+            --border-muted: #1a2232;
+            --border-active: #3b82f6;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #60a5fa;
+            --accent-blue-light: #1e293b;
+            --accent-green-light: #064e3b;
+            --accent-green-text: #34d399;
+            --accent-red-light: #450a0a;
+            --accent-red-text: #f87171;
+            --editor-bg: #090d16;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-ui);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-x: hidden;
+            position: relative;
+            transition: background-color 0.4s, color 0.4s;
+        }
+
+        /* FOND ANIMÉ MODERNE HAUT DE GAMME (AURORA & MESH GRADIENTS) */
+        .ambient-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .aurora-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            will-change: transform;
+            mix-blend-mode: multiply;
+        }
+
+        [data-theme="dark"] .aurora-orb {
+            mix-blend-mode: screen;
+            opacity: 0.35;
+            filter: blur(95px);
+        }
+
+        /* 4 Orbes de couleurs vives & dynamiques */
+        .orb-blue {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, #3b82f6 0%, rgba(59, 130, 246, 0) 70%);
+            top: -10%;
+            left: -5%;
+            animation: floatOrb1 20s ease-in-out infinite alternate;
+        }
+
+        .orb-purple {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #8b5cf6 0%, rgba(139, 92, 246, 0) 70%);
+            top: 40%;
+            right: -8%;
+            animation: floatOrb2 24s ease-in-out infinite alternate;
+        }
+
+        .orb-emerald {
+            width: 480px;
+            height: 480px;
+            background: radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 70%);
+            bottom: -10%;
+            left: 20%;
+            animation: floatOrb3 22s ease-in-out infinite alternate;
+        }
+
+        .orb-coral {
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, #f43f5e 0%, rgba(244, 63, 94, 0) 70%);
+            top: 15%;
+            left: 45%;
+            animation: floatOrb4 26s ease-in-out infinite alternate;
+            opacity: 0.45;
+        }
+
+        /* Trajectoires d'animations organiques */
+        @keyframes floatOrb1 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(120px, 80px) scale(1.15); }
+            100% { transform: translate(60px, 140px) scale(0.95); }
+        }
+
+        @keyframes floatOrb2 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-100px, -90px) scale(1.2); }
+            100% { transform: translate(-160px, 40px) scale(0.9); }
+        }
+
+        @keyframes floatOrb3 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(80px, -110px) scale(1.1); }
+            100% { transform: translate(-90px, -50px) scale(1.05); }
+        }
+
+        @keyframes floatOrb4 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-120px, 100px) scale(1.12); }
+            100% { transform: translate(90px, -80px) scale(0.92); }
+        }
+
+        /* Grille subtile en surimpression façon Linear / Vercel */
+        .ambient-grid {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(100, 116, 139, 0.22) 1px, transparent 1px);
+            background-size: 28px 28px;
+            mask-image: radial-gradient(ellipse at center, black 50%, transparent 85%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 50%, transparent 85%);
+            opacity: 0.75;
+        }
+
+        /* En-tête Marque DEVA LABS Moderne & Néon */
+        .academic-bar {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--border-default);
+            border-radius: 14px;
+            padding: 12px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.08), var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .academic-bar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #2563eb, #06b6d4, #10b981, #7c3aed, #2563eb);
+            background-size: 300% 100%;
+            animation: auroraShift 8s linear infinite;
+        }
+
+        [data-theme="dark"] .academic-bar {
+            background: rgba(15, 23, 42, 0.88);
+            border-color: rgba(6, 182, 212, 0.25);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(6, 182, 212, 0.12);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo-frame {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo-img {
+            height: 52px;
+            width: 52px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1.5px solid rgba(6, 182, 212, 0.5);
+            box-shadow: 0 0 18px rgba(6, 182, 212, 0.45), 0 0 35px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s var(--ease-out);
+            background: #000;
+        }
+
+        .brand-logo-frame:hover .brand-logo-img {
+            transform: scale(1.06);
+            box-shadow: 0 0 26px rgba(6, 182, 212, 0.7), 0 0 45px rgba(37, 99, 235, 0.5);
+            border-color: #38bdf8;
+        }
+
+        .brand-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .brand-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-badge {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(6, 182, 212, 0.2));
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: #0284c7;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 20px;
+            letter-spacing: 0.8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+        }
+
+        [data-theme="dark"] .brand-badge {
+            color: #38bdf8;
+            border-color: rgba(56, 189, 248, 0.5);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(6, 182, 212, 0.25));
+        }
+
+        .brand-pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #06b6d4;
+            box-shadow: 0 0 8px #06b6d4;
+            animation: pulseLed 1.8s infinite;
+        }
+
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .neon-text-deva {
+            background: linear-gradient(135deg, #38bdf8, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .neon-text-labs {
+            background: linear-gradient(135deg, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .brand-version {
+            font-size: 0.72rem;
+            font-family: var(--font-mono);
+            color: var(--text-tertiary);
+            font-weight: 600;
+            background: var(--bg-subtle);
+            padding: 2px 7px;
+            border-radius: 5px;
+            border: 1px solid var(--border-default);
+        }
+
+        .brand-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .auth-brand-logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            margin: 0 auto 12px;
+            display: block;
+            border: 1.5px solid rgba(6, 182, 212, 0.5);
+            box-shadow: 0 0 18px rgba(6, 182, 212, 0.45);
+            background: #000;
+            object-fit: cover;
+        }
+
+        .academic-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-theme-toggle {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-default);
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s var(--ease-out);
+        }
+
+        .btn-theme-toggle:hover {
+            color: var(--text-primary);
+            border-color: var(--text-tertiary);
+            transform: translateY(-1px);
+        }
+
+        .btn-ergo-toggle {
+            background: var(--accent-blue);
+            border: none;
+            color: white;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px var(--accent-blue-glow);
+            transition: all 0.2s var(--ease-out);
+        }
+
+        .btn-ergo-toggle:hover {
+            background: var(--accent-blue-hover);
+            transform: translateY(-1px);
+        }
+
+        /* FENÊTRE PRINCIPALE DU LOGICIEL (STYLE DESKTOP LUMINEUX) */
+        .software-window {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            box-shadow: 0 20px 48px -12px rgba(15, 23, 42, 0.15), 0 0 1px 1px rgba(255,255,255,0.8);
+            display: flex;
+            flex-direction: column;
+            min-height: 690px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        [data-theme="dark"] .software-window {
+            background: rgba(19, 25, 36, 0.92);
+            box-shadow: 0 24px 56px -12px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255,255,255,0.06);
+        }
+
+        /* 1. Barre de titre native */
+        .window-titlebar {
+            background: var(--bg-subtle);
+            padding: 9px 16px;
+            border-bottom: 1px solid var(--border-default);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .titlebar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .w-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transition: transform 0.15s;
+        }
+        .w-dot:hover { transform: scale(1.15); }
+        .w-close { background: #ff5f56; }
+        .w-min { background: #ffbd2e; }
+        .w-max { background: #27c93f; }
+
+        .app-caption {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-caption strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* 2. MenuBar Swing Réel avec Ligne Lumineuse Animée */
+        .swing-menubar {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-default);
+            display: flex;
+            align-items: center;
+            padding: 3px 10px;
+            font-size: 0.78rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .swing-menubar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #2563eb, #8b5cf6, #10b981, #f43f5e, #06b6d4, #2563eb);
+            background-size: 400% 100%;
+            animation: gradientMenuBar 8s linear infinite;
+        }
+
+        @keyframes gradientMenuBar {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .menu-item {
+            padding: 6px 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.22s var(--ease-out);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .menu-item-fichier:hover {
+            color: #2563eb;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(6, 182, 212, 0.16));
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .menu-item-edition:hover {
+            color: #8b5cf6;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(217, 70, 239, 0.16));
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .menu-item-parcours:hover {
+            color: #059669;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(52, 211, 153, 0.16));
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .menu-item-pedagogie:hover {
+            color: #d97706;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(249, 115, 22, 0.16));
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .menu-item-aide:hover {
+            color: #e11d48;
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.16), rgba(236, 72, 153, 0.16));
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* 3. Toolbar de Navigation Épurée & Colorée */
+        .swing-toolbar {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-default);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        [data-theme="dark"] .swing-toolbar {
+            background: rgba(19, 25, 36, 0.88);
+        }
+
+        .view-switcher {
+            display: flex;
+            gap: 6px;
+            background: var(--bg-subtle);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border-default);
+        }
+
+        .btn-view {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 7px 15px;
+            border-radius: 7px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.22s var(--ease-out);
+            position: relative;
+        }
+
+        /* Indicateur lumineux coloré par onglet */
+        .tab-indicator {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.25s;
+        }
+        .ind-blue { background: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.8); }
+        .ind-purple { background: #8b5cf6; box-shadow: 0 0 8px rgba(139, 92, 246, 0.8); }
+        .ind-emerald { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.8); }
+        .ind-amber { background: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.8); }
+        .ind-teal { background: #14b8a6; box-shadow: 0 0 8px rgba(20, 184, 166, 0.8); }
+        .ind-fuchsia { background: #ec4899; box-shadow: 0 0 8px rgba(236, 72, 153, 0.8); }
+
+        .btn-view.active .tab-indicator {
+            background: #ffffff;
+            box-shadow: 0 0 10px #ffffff;
+            transform: scale(1.25);
+        }
+
+        /* Effets de survol nuancés pour chaque bouton */
+        #btn-tab-s1:hover:not(.active) { background: rgba(59, 130, 246, 0.12); color: #2563eb; transform: translateY(-1px); }
+        #btn-tab-s2:hover:not(.active) { background: rgba(99, 102, 241, 0.12); color: #6366f1; transform: translateY(-1px); }
+        #btn-tab-s3:hover:not(.active) { background: rgba(16, 185, 129, 0.12); color: #059669; transform: translateY(-1px); }
+        #btn-tab-s4:hover:not(.active) { background: rgba(245, 158, 11, 0.12); color: #d97706; transform: translateY(-1px); }
+        #btn-tab-s5:hover:not(.active) { background: rgba(20, 184, 166, 0.12); color: #0f766e; transform: translateY(-1px); }
+        #btn-tab-s6:hover:not(.active) { background: rgba(139, 92, 246, 0.12); color: #7c3aed; transform: translateY(-1px); }
+
+        /* Onglets actifs avec gradients Aurora personnalisés et dynamiques */
+        .btn-view.active {
+            color: white !important;
+            transform: translateY(-1px);
+        }
+
+        #btn-tab-s1.active {
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #06b6d4, #1e40af);
+            background-size: 300% 300%;
+            animation: auroraShift 5s ease infinite;
+            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.45);
+        }
+
+        #btn-tab-s2.active {
+            background: linear-gradient(135deg, #4338ca, #6366f1, #8b5cf6, #4338ca);
+            background-size: 300% 300%;
+            animation: auroraShift 5s ease infinite;
+            box-shadow: 0 4px 18px rgba(99, 102, 241, 0.45);
+        }
+
+        #btn-tab-s3.active {
+            background: linear-gradient(135deg, #047857, #10b981, #06b6d4, #047857);
+            background-size: 300% 300%;
+            animation: auroraShift 5s ease infinite;
+            box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
+        }
+
+        #btn-tab-s4.active {
+            background: linear-gradient(135deg, #b45309, #f59e0b, #ef4444, #b45309);
+            background-size: 300% 300%;
+            animation: auroraShift 5s ease infinite;
+            box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
+        }
+
+        #btn-tab-s5.active {
+            background: linear-gradient(135deg, #0f766e, #14b8a6, #3b82f6, #0f766e);
+            background-size: 300% 300%;
+            animation: auroraShift 5s ease infinite;
+            box-shadow: 0 4px 18px rgba(20, 184, 166, 0.45);
+        }
+
+        #btn-tab-s6.active {
+            background: linear-gradient(135deg, #6d28d9, #8b5cf6, #ec4899, #6d28d9);
+            background-size: 300% 300%;
+            animation: auroraShift 5s ease infinite;
+            box-shadow: 0 4px 18px rgba(139, 92, 246, 0.45);
+        }
+
+        @keyframes auroraShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .user-tag {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-subtle);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-default);
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+            animation: pulseLed 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseLed {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.85); }
+        }
+
+        /* 4. Corps principal de l'application avec Fond Animé Interne */
+        .window-content {
+            flex: 1;
+            background: rgba(241, 245, 249, 0.45);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        [data-theme="dark"] .window-content {
+            background: rgba(11, 15, 25, 0.45);
+        }
+
+        /* AMBIENT ANIMÉ INTERNE AUX VUES (CONNEXION, DASHBOARD, COURS, EVALUATION, RELEVE, ENSEIGNANT) */
+        .internal-ambient-canvas {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .inner-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(65px);
+            will-change: transform;
+            opacity: 0.65;
+            mix-blend-mode: multiply;
+        }
+
+        [data-theme="dark"] .inner-orb {
+            mix-blend-mode: screen;
+            opacity: 0.45;
+            filter: blur(80px);
+        }
+
+        .inner-orb-1 {
+            width: 480px;
+            height: 480px;
+            background: radial-gradient(circle, #3b82f6 0%, rgba(59, 130, 246, 0) 70%);
+            top: -10%;
+            right: 5%;
+            animation: floatInner1 18s ease-in-out infinite alternate;
+        }
+
+        .inner-orb-2 {
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, #8b5cf6 0%, rgba(139, 92, 246, 0) 70%);
+            bottom: 5%;
+            left: 5%;
+            animation: floatInner2 22s ease-in-out infinite alternate;
+        }
+
+        .inner-orb-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 70%);
+            top: 30%;
+            left: 40%;
+            animation: floatInner3 20s ease-in-out infinite alternate;
+        }
+
+        .inner-orb-4 {
+            width: 360px;
+            height: 360px;
+            background: radial-gradient(circle, #f43f5e 0%, rgba(244, 63, 94, 0) 70%);
+            bottom: -5%;
+            right: 25%;
+            animation: floatInner4 24s ease-in-out infinite alternate;
+            opacity: 0.45;
+        }
+
+        @keyframes floatInner1 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-100px, 80px) scale(1.15); }
+            100% { transform: translate(60px, 120px) scale(0.9); }
+        }
+
+        @keyframes floatInner2 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(90px, -80px) scale(1.2); }
+            100% { transform: translate(-70px, 60px) scale(0.95); }
+        }
+
+        @keyframes floatInner3 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-110px, -70px) scale(1.12); }
+            100% { transform: translate(80px, 90px) scale(0.92); }
+        }
+
+        @keyframes floatInner4 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(70px, -90px) scale(1.1); }
+            100% { transform: translate(-80px, -40px) scale(0.95); }
+        }
+
+        .screen-pane {
+            display: none;
+            padding: 26px;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .screen-pane.active {
+            display: flex;
+            animation: viewFadeSlide 0.28s var(--ease-out) forwards;
+        }
+
+        @keyframes viewFadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 5. Barre de statut */
+        .swing-statusbar {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-default);
+            padding: 6px 14px;
+            font-size: 0.74rem;
+            color: var(--text-tertiary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            font-family: var(--font-mono);
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* VUES ET ÉCRANS DU LOGICIEL */
+
+        /* ÉCRAN 1 : AUTHENTIFICATION */
+        .auth-container {
+            max-width: 400px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            padding: 34px 28px;
+            box-shadow: 0 16px 36px rgba(37, 99, 235, 0.16), var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .auth-container {
+            background: rgba(19, 25, 36, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #2563eb, #8b5cf6, #06b6d4, #2563eb);
+            background-size: 300% 100%;
+            animation: auroraShift 6s linear infinite;
+        }
+
+        .auth-header {
+            margin-bottom: 22px;
+            text-align: center;
+        }
+
+        .auth-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .auth-header p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .role-tabs {
+            display: flex;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 20px;
+        }
+
+        .role-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 7px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.15s;
+        }
+
+        .role-btn.active {
+            background: var(--bg-surface);
+            color: var(--accent-blue);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-row {
+            margin-bottom: 16px;
+        }
+
+        .form-row label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .input-text {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            padding: 9px 12px;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .input-text:focus {
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 3px var(--accent-blue-glow);
+        }
+
+        .btn-submit-auth {
+            width: 100%;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            border: none;
+            padding: 11px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s var(--ease-out);
+            margin-top: 8px;
+            box-shadow: 0 4px 14px var(--accent-blue-glow);
+        }
+
+        .btn-submit-auth:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px var(--accent-blue-glow);
+        }
+
+        /* BANNIÈRE HERO COLORÉE SUR LE DASHBOARD */
+        .dash-hero-banner {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 30%, #7c3aed 70%, #06b6d4 100%);
+            background-size: 300% 300%;
+            animation: auroraShift 8s ease infinite;
+            border-radius: 14px;
+            padding: 22px 26px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dash-hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(255,255,255,0.22) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .dash-hero-banner h2 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+        }
+
+        .dash-hero-banner p {
+            font-size: 0.85rem;
+            color: #dbeafe;
+        }
+
+        .dash-progress-box {
+            background: rgba(15, 23, 42, 0.35);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            padding: 14px 18px;
+            min-width: 280px;
+        }
+
+        .dash-progress-label {
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        .bar-track {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
+            border-radius: 5px;
+            transition: width 0.7s var(--spring);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
+        }
+
+        .bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: barShimmer 2.2s infinite;
+        }
+
+        @keyframes barShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* CARTES DE NIVEAUX VIBRANTES & ULTRA-ATTRAYANTES */
+        .level-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .matrix-card {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(14px);
+            border: 2px solid var(--border-default);
+            border-radius: 14px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: all 0.3s var(--ease-out);
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .matrix-card {
+            background: rgba(19, 25, 36, 0.82);
+        }
+
+        .matrix-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 36px rgba(37, 99, 235, 0.18);
+        }
+
+        /* Niveau 1 : Dégradé Vert Émeraude */
+        .matrix-card.status-done {
+            border-color: #34d399;
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.15) 0%, rgba(255, 255, 255, 0.8) 65%);
+        }
+
+        [data-theme="dark"] .matrix-card.status-done {
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.15) 0%, rgba(19, 25, 36, 0.8) 65%);
+        }
+
+        .matrix-card.status-done::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        /* Niveau 2 : Dégradé Bleu Indigo Électrique */
+        .matrix-card.status-current {
+            border-color: #3b82f6;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.15) 0%, rgba(255, 255, 255, 0.8) 65%);
+            box-shadow: 0 0 0 1px #3b82f6, 0 8px 28px rgba(37, 99, 235, 0.22);
+            animation: cardGlowPulse 3s infinite alternate ease-in-out;
+        }
+
+        [data-theme="dark"] .matrix-card.status-current {
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.15) 0%, rgba(19, 25, 36, 0.8) 65%);
+        }
+
+        .matrix-card.status-current::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #06b6d4);
+        }
+
+        @keyframes cardGlowPulse {
+            0% { box-shadow: 0 0 0 1px #3b82f6, 0 4px 14px rgba(37,99,235,0.1); }
+            100% { box-shadow: 0 0 0 2px #2563eb, 0 10px 32px rgba(37,99,235,0.3); }
+        }
+
+        /* Niveau 3 : Ambre / Violet */
+        .matrix-card.status-blocked {
+            opacity: 0.8;
+            background: rgba(248, 250, 252, 0.7);
+            border-style: dashed;
+            border-color: #94a3b8;
+        }
+
+        [data-theme="dark"] .matrix-card.status-blocked {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pill-state {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pill-done { background: #dcfce7; color: #15803d; border: 1px solid #86efac; box-shadow: 0 2px 6px rgba(22, 163, 74, 0.15); }
+        .pill-current { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2); }
+        .pill-blocked { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
+
+        .card-num {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-family: var(--font-mono);
+            font-weight: 700;
+            background: var(--bg-subtle);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .card-desc {
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .card-metrics {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-metrics strong {
+            color: var(--text-primary);
+        }
+
+        .btn-card {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-default);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s var(--ease-out);
+        }
+
+        .btn-card-done { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+        .btn-card-done:hover { background: #d1fae5; transform: translateY(-2px); }
+        .btn-card-active {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+        }
+        .btn-card-active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+        }
+        .btn-card-blocked { background: var(--bg-subtle); color: var(--text-tertiary); cursor: not-allowed; }
+
+        /* ÉCRAN 3 : COURS & ATELIER PRATIQUE */
+        .ide-split {
+            display: grid;
+            grid-template-columns: 220px 1.25fr 1fr;
+            gap: 14px;
+            height: 520px;
+        }
+
+        .file-tree {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 0.8rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+
+        [data-theme="dark"] .file-tree {
+            background: rgba(19, 25, 36, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .tree-root-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            padding: 4px 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .tree-row {
+            padding: 7px 10px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.12s;
+            font-weight: 500;
+        }
+
+        .tree-row:hover {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--text-primary);
+            transform: translateX(2px);
+        }
+
+        .tree-row.active {
+            background: linear-gradient(90deg, rgba(37, 99, 235, 0.15), rgba(6, 182, 212, 0.1));
+            color: var(--accent-blue);
+            font-weight: 600;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .file-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            letter-spacing: 0.5px;
+        }
+        .badge-blue { background: #dbeafe; color: #1d4ed8; }
+        .badge-green { background: #dcfce7; color: #15803d; }
+
+        .lesson-sheet {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            padding: 22px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+
+        [data-theme="dark"] .lesson-sheet {
+            background: rgba(19, 25, 36, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .lesson-sheet::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .lesson-sheet h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .code-box {
+            background: var(--editor-bg);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: #38bdf8;
+            margin: 12px 0;
+            overflow-x: auto;
+            line-height: 1.45;
+        }
+
+        .code-workbench {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-default);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            transition: box-shadow 0.2s;
+            position: relative;
+        }
+
+        [data-theme="dark"] .code-workbench {
+            background: rgba(19, 25, 36, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .code-workbench::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6);
+            z-index: 2;
+        }
+
+        .code-workbench.flash-success {
+            box-shadow: 0 0 0 3px var(--accent-green);
+        }
+
+        .workbench-header {
+            background: #1e293b;
+            padding: 7px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.74rem;
+            color: #94a3b8;
+            font-family: var(--font-mono);
+        }
+
+        .code-editor-area {
+            flex: 1;
+            background: var(--editor-bg);
+            border: none;
+            color: #4ade80;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            padding: 14px;
+            resize: none;
+            outline: none;
+            line-height: 1.45;
+        }
+
+        .render-canvas-box {
+            height: 135px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-default);
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .render-canvas-label {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .render-viewport {
+            flex: 1;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+            transition: all 0.4s var(--spring);
+        }
+
+        .render-block {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 7px 14px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(37,99,235,0.25);
+            transition: all 0.45s var(--spring);
+        }
+
+        .workbench-footer {
+            background: var(--bg-subtle);
+            border-top: 1px solid var(--border-default);
+            padding: 8px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-run-code {
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s var(--ease-out);
+            box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+        }
+
+        .btn-run-code:hover {
+            background: var(--accent-green-hover);
+            transform: scale(1.02);
+        }
+
+        /* ÉCRAN 4 : ÉVALUATION ET TEST */
+        .exam-layout {
+            max-width: 680px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(18px);
+            border: 1px solid var(--border-default);
+            border-radius: 14px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 16px 36px rgba(245, 158, 11, 0.12), var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .exam-layout {
+            background: rgba(19, 25, 36, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .exam-layout::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f59e0b, #ef4444, #8b5cf6, #f59e0b);
+            background-size: 300% 100%;
+            animation: auroraShift 6s linear infinite;
+        }
+
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-default);
+            padding-bottom: 14px;
+        }
+
+        .exam-title-grp h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .exam-title-grp p {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        .exam-timer {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 6px;
+        }
+
+        .q-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .q-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .choice-item {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-default);
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            transition: all 0.18s var(--ease-out);
+        }
+
+        [data-theme="dark"] .choice-item {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .choice-item:hover {
+            border-color: #f59e0b;
+            transform: translateX(4px);
+            background: rgba(245, 158, 11, 0.08);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
+        }
+
+        .choice-item.selected {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(239, 68, 68, 0.1));
+            color: #b45309;
+            font-weight: 700;
+            box-shadow: 0 0 0 1px #f59e0b, 0 4px 14px rgba(245, 158, 11, 0.18);
+        }
+
+        [data-theme="dark"] .choice-item.selected {
+            color: #fbbf24;
+        }
+
+        .choice-bullet {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .choice-item.selected .choice-bullet {
+            border-color: var(--accent-blue);
+            transform: scale(1.15);
+        }
+
+        .choice-item.selected .choice-bullet::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+        }
+
+        .exam-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-default);
+            padding-top: 16px;
+        }
+
+        .btn-exam-next {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s var(--ease-out);
+            box-shadow: 0 2px 8px var(--accent-blue-glow);
+        }
+
+        .btn-exam-next:hover {
+            background: var(--accent-blue-hover);
+            transform: translateY(-1px);
+        }
+
+        /* ÉCRAN 5 : RELEVÉ DE NOTE */
+        .grade-sheet {
+            max-width: 520px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.84);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: 0 16px 40px rgba(16, 185, 129, 0.15), var(--shadow-lg);
+            animation: sheetPop 0.35s var(--spring) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .grade-sheet {
+            background: rgba(19, 25, 36, 0.84);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .grade-sheet::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6, #10b981);
+            background-size: 300% 100%;
+            animation: auroraShift 6s linear infinite;
+        }
+
+        @keyframes sheetPop {
+            0% { transform: scale(0.94); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .grade-top {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            border-bottom: 1px solid var(--border-default);
+            padding-bottom: 18px;
+        }
+
+        .grade-badge {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            background: #dcfce7;
+            border: 2px solid #86efac;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #15803d;
+            font-family: var(--font-mono);
+            box-shadow: 0 4px 14px rgba(16,185,129,0.25);
+            animation: badgeBounce 0.5s var(--spring);
+        }
+
+        @keyframes badgeBounce {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .grade-badge.failed {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #b91c1c;
+            box-shadow: 0 4px 14px rgba(239,68,68,0.25);
+        }
+
+        .grade-info h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .grade-info p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .decision-box {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .decision-box.unlocked {
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .decision-box.locked {
+            border-left: 4px solid var(--accent-red);
+        }
+
+        /* ÉCRAN 6 : ESPACE ENSEIGNANT & WIDGETS STATISTIQUES */
+        .teacher-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-widget {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s var(--ease-out);
+        }
+
+        [data-theme="dark"] .stat-widget {
+            background: rgba(19, 25, 36, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-widget:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
+        }
+
+        .stat-widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+
+        .widget-blue::before { background: linear-gradient(180deg, #2563eb, #3b82f6); }
+        .widget-green::before { background: linear-gradient(180deg, #059669, #10b981); }
+        .widget-purple::before { background: linear-gradient(180deg, #7c3aed, #a855f7); }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .widget-blue .stat-icon { background: #eff6ff; color: #2563eb; }
+        .widget-green .stat-icon { background: #ecfdf5; color: #059669; }
+        .widget-purple .stat-icon { background: #faf5ff; color: #7c3aed; }
+
+        .stat-val {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.1;
+            font-family: var(--font-mono);
+        }
+
+        .stat-lbl {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .teacher-view {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 18px;
+        }
+
+        .config-card {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .config-card {
+            background: rgba(19, 25, 36, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .config-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #7c3aed, #a855f7, #ec4899);
+        }
+
+        .config-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-default);
+            padding-bottom: 10px;
+        }
+
+        .param-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .param-header strong {
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        .slider-control {
+            width: 100%;
+            accent-color: var(--accent-blue);
+            cursor: pointer;
+        }
+
+        .data-table-card {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        [data-theme="dark"] .data-table-card {
+            background: rgba(19, 25, 36, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .data-table-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #7c3aed, #ec4899);
+        }
+
+        .table-filter-bar {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border-default);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .std-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .std-table th {
+            background: var(--bg-subtle);
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        .std-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-default);
+            color: var(--text-primary);
+        }
+
+        .std-table tbody tr:hover td {
+            background: var(--bg-subtle);
+        }
+
+        .pill-score {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            display: inline-block;
+        }
+        .score-ok { background: #dcfce7; color: #15803d; }
+        .score-ko { background: #fee2e2; color: #b91c1c; }
+
+        /* MODALE JOPTIONPANE */
+        .modal-shade {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-shade.visible {
+            display: flex;
+        }
+
+        .swing-modal {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            width: 420px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: modalPop 0.25s var(--spring);
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.92); }
+            to { transform: scale(1); }
+        }
+
+        .modal-bar {
+            background: var(--bg-subtle);
+            padding: 10px 16px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        .modal-body {
+            padding: 20px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .modal-footer {
+            background: var(--bg-subtle);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid var(--border-default);
+        }
+
+        .btn-m-cancel {
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-default);
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-m-confirm {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* TIROIR D'ANALYSE ERGONOMIQUE */
+        .ergo-drawer {
+            position: fixed;
+            top: 0;
+            right: -390px;
+            width: 370px;
+            height: 100vh;
+            background: var(--bg-surface);
+            border-left: 1px solid var(--border-default);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.15);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.28s var(--ease-out);
+        }
+
+        .ergo-drawer.open {
+            right: 0;
+        }
+
+        .drawer-head {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-default);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-head h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .drawer-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            font-size: 0.82rem;
+        }
+
+        .ergo-item {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-default);
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+        }
+
+        .ergo-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .ergo-text {
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        .ergo-swing {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            margin-top: 6px;
+        }
+
+        /* Toast système moderne */
+        .sys-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #0f172a;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 3000;
+            opacity: 0;
+            transform: translateY(12px) scale(0.96);
+            transition: all 0.25s var(--ease-out);
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .sys-toast.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .toast-timer-line {
+            height: 3px;
+            background: var(--accent-blue);
+            width: 100%;
+            animation: lineDrain 2.6s linear forwards;
+            border-radius: 2px;
+        }
+
+        @keyframes lineDrain {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- FOND ANIMÉ MODERNE HAUT DE GAMME (AURORA & MESH GRADIENTS) -->
+    <div class="ambient-canvas">
+        <div class="aurora-orb orb-blue"></div>
+        <div class="aurora-orb orb-purple"></div>
+        <div class="aurora-orb orb-emerald"></div>
+        <div class="aurora-orb orb-coral"></div>
+        <div class="ambient-grid"></div>
+    </div>
+
+    <!-- Notification Toast Système -->
+    <div class="sys-toast" id="toast-el">
+        <span id="toast-txt">Message système</span>
+        <div class="toast-timer-line"></div>
+    </div>
+
+    <!-- En-tête Marque DEVA LABS avec Logo Néon Futuriste -->
+    <header class="academic-bar">
+        <div class="brand-container">
+            <div class="brand-logo-frame">
+                <img src="Logo futuriste DEVA LABS en néon.png" 
+                     onerror="if(this.src!=='file:///C:/Users/user/Downloads/Logo%20futuriste%20DEVA%20LABS%20en%20n%C3%A9on.png') this.src='file:///C:/Users/user/Downloads/Logo%20futuriste%20DEVA%20LABS%20en%20n%C3%A9on.png';" 
+                     alt="DEVA LABS Logo" 
+                     class="brand-logo-img">
+            </div>
+            <div class="brand-info">
+                <div class="brand-badge-row">
+                    <span class="brand-badge"><span class="brand-pulse-dot"></span>DEVA LABS TECH</span>
+                    <span class="brand-version">v2.4 &bull; Java Swing IHM</span>
+                </div>
+                <h1 class="brand-title">
+                    <span class="neon-text-deva">DEVA</span><span class="neon-text-labs">LABS</span> &mdash; <span>Plateforme Pédagogique par Niveaux</span>
+                </h1>
+                <p class="brand-subtitle">Architecture Client Riche &bull; Progression Pédagogique Linéaire &bull; Moteur d'Évaluation Automatique</p>
+            </div>
+        </div>
+        <div class="academic-actions">
+            <!-- Bouton Bascule Thème Clair / Sombre -->
+            <button class="btn-theme-toggle" onclick="toggleColorTheme()" id="btn-theme">
+                <span>🌓</span> Thème Clair / Sombre
+            </button>
+            <button class="btn-ergo-toggle" onclick="toggleErgoDrawer()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Fiche Ergonomique (Bastien &amp; Scapin)
+            </button>
+        </div>
+    </header>
+
+    <!-- Fenêtre du Logiciel Desktop Java Swing (Look Lumineux & Moderne) -->
+    <main class="software-window">
+        
+        <!-- 1. Window Titlebar -->
+        <div class="window-titlebar">
+            <div class="titlebar-left">
+                <div class="window-dots">
+                    <span class="w-dot w-close" title="Fermer"></span>
+                    <span class="w-dot w-min" title="Réduire"></span>
+                    <span class="w-dot w-max" title="Agrandir"></span>
+                </div>
+                <div class="app-caption">
+                    <strong>DEVA LABS Studio</strong> &mdash; <span id="caption-route">Authentification</span>
+                </div>
+            </div>
+            <span style="font-size: 0.72rem; color: var(--text-tertiary); font-family: var(--font-mono); font-weight: 500;">JFrame &bull; javax.swing</span>
+        </div>
+
+        <!-- 2. JMenuBar Swing Réel -->
+        <div class="swing-menubar">
+            <span class="menu-item menu-item-fichier" onclick="notify('Menu Fichier : Gestion des projets &amp; exports')">Fichier</span>
+            <span class="menu-item menu-item-edition" onclick="notify('Menu Édition : Préférences &amp; configuration du compilateur')">Édition</span>
+            <span class="menu-item menu-item-parcours" onclick="showScreen('s2')">Parcours</span>
+            <span class="menu-item menu-item-pedagogie" onclick="showScreen('s6')">Pédagogie</span>
+            <span class="menu-item menu-item-aide" onclick="toggleErgoDrawer()">Aide &amp; Ergonomie</span>
+        </div>
+
+        <!-- 3. Toolbar de Navigation Épurée -->
+        <div class="swing-toolbar">
+            <div class="view-switcher">
+                <button class="btn-view active" id="btn-tab-s1" onclick="showScreen('s1')"><span class="tab-indicator ind-blue"></span>Connexion</button>
+                <button class="btn-view" id="btn-tab-s2" onclick="showScreen('s2')"><span class="tab-indicator ind-purple"></span>Tableau de bord</button>
+                <button class="btn-view" id="btn-tab-s3" onclick="showScreen('s3')"><span class="tab-indicator ind-emerald"></span>Cours &amp; Atelier</button>
+                <button class="btn-view" id="btn-tab-s4" onclick="showScreen('s4')"><span class="tab-indicator ind-amber"></span>Évaluation</button>
+                <button class="btn-view" id="btn-tab-s5" onclick="showScreen('s5')"><span class="tab-indicator ind-teal"></span>Relevé de note</button>
+                <button class="btn-view" id="btn-tab-s6" onclick="showScreen('s6')"><span class="tab-indicator ind-fuchsia"></span>Espace Enseignant</button>
+            </div>
+            <div class="user-tag">
+                <span class="user-dot"></span>
+                <span id="user-status-text">Session : yacine.benali (L3)</span>
+            </div>
+        </div>
+
+        <!-- 4. Contenu des Vues (CardLayout) -->
+        <div class="window-content">
+
+            <!-- FOND ANIMÉ MODERNE INTERNE AUX ÉCRANS (AURORA SUR TOUTES LES VUES) -->
+            <div class="internal-ambient-canvas">
+                <div class="inner-orb inner-orb-1"></div>
+                <div class="inner-orb inner-orb-2"></div>
+                <div class="inner-orb inner-orb-3"></div>
+                <div class="inner-orb inner-orb-4"></div>
+            </div>
+
+            <!-- ÉCRAN 1 : CONNEXION -->
+            <section class="screen-pane active" id="s1">
+                <div class="auth-container">
+                    <div class="auth-header">
+                        <img src="Logo futuriste DEVA LABS en néon.png" 
+                             onerror="if(this.src!=='file:///C:/Users/user/Downloads/Logo%20futuriste%20DEVA%20LABS%20en%20n%C3%A9on.png') this.src='file:///C:/Users/user/Downloads/Logo%20futuriste%20DEVA%20LABS%20en%20n%C3%A9on.png';"
+                             alt="DEVA LABS" 
+                             class="auth-brand-logo">
+                        <h2>DEVA LABS Studio</h2>
+                        <p>Connexion sécurisée aux parcours de programmation</p>
+                    </div>
+
+                    <div class="role-tabs">
+                        <button class="role-btn active" onclick="pickRole(this, 'Apprenant')">Apprenant</button>
+                        <button class="role-btn" onclick="pickRole(this, 'Enseignant')">Enseignant</button>
+                        <button class="role-btn" onclick="pickRole(this, 'Admin')">Administrateur</button>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Identifiant académique</label>
+                        <input type="text" class="input-text" id="auth-login" value="yacine.benali@univ.dz">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Mot de passe</label>
+                        <input type="password" class="input-text" value="••••••••••••">
+                    </div>
+
+                    <button class="btn-submit-auth" onclick="loginAction()">Ouvrir ma session ➔</button>
+                </div>
+            </section>
+
+            <!-- ÉCRAN 2 : HUB DES NIVEAUX (DASHBOARD) -->
+            <section class="screen-pane" id="s2">
+                <div class="dash-hero-banner">
+                    <div>
+                        <h2>Cursus de Programmation Web</h2>
+                        <p>Progression linéaire conditionnée par validation automatique (Règles RG1 &amp; RG3)</p>
+                    </div>
+                    <div class="dash-progress-box">
+                        <div class="dash-progress-label">
+                            <span>Progression du cursus</span>
+                            <span id="dash-prog-percent" style="font-weight:700; color:#34d399;">33% (1/3 validé)</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" id="dash-prog-bar" style="width: 33%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="level-matrix">
+                    <!-- Niveau 1 -->
+                    <div class="matrix-card status-done" id="card-l1">
+                        <div class="card-top">
+                            <span class="pill-state pill-done">✓ Validé</span>
+                            <span class="card-num">NIVEAU 01</span>
+                        </div>
+                        <div class="card-title">HTML &mdash; Structure &amp; Sémantique</div>
+                        <p class="card-desc">Hiérarchie du document, formulaires web, tableaux et balises sémantiques modernes.</p>
+                        <div class="card-metrics">
+                            <span>Score obtenu : <strong>85%</strong></span>
+                            <span>Statut : <span style="color:#10b981; font-weight:600;">Acquis</span></span>
+                        </div>
+                        <button class="btn-card btn-card-done" onclick="openLesson(1)">Consulter le support</button>
+                    </div>
+
+                    <!-- Niveau 2 -->
+                    <div class="matrix-card status-current" id="card-l2">
+                        <div class="card-top">
+                            <span class="pill-state pill-current" id="chip-l2">En cours</span>
+                            <span class="card-num">NIVEAU 02</span>
+                        </div>
+                        <div class="card-title">CSS &mdash; Flexbox &amp; Responsive</div>
+                        <p class="card-desc">Modèle de boîte, disposition flexible unidimensionnelle et règles d'alignement adaptatif.</p>
+                        <div class="card-metrics">
+                            <span>Seuil requis : <strong id="lbl-seuil-l2">70%</strong></span>
+                            <span>Tentatives : <strong id="lbl-att-l2">0/2</strong></span>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                            <button class="btn-card" style="background:#f1f5f9; color:#0f172a;" onclick="openLesson(2)">Ouvrir l'atelier</button>
+                            <button class="btn-card btn-card-active" onclick="startTest()">Passer le test</button>
+                        </div>
+                    </div>
+
+                    <!-- Niveau 3 -->
+                    <div class="matrix-card status-blocked" id="card-l3">
+                        <div class="card-top">
+                            <span class="pill-state pill-blocked" id="chip-l3">Verrouillé</span>
+                            <span class="card-num">NIVEAU 03</span>
+                        </div>
+                        <div class="card-title">JavaScript &mdash; DOM &amp; Événements</div>
+                        <p class="card-desc">Manipulation programmatique des nœuds HTML, écouteurs d'événements et requêtes asynchrones.</p>
+                        <div class="card-metrics">
+                            <span>Condition : <strong>Valider Niv. 2</strong></span>
+                            <span>Règle : RG3</span>
+                        </div>
+                        <button class="btn-card btn-card-blocked" id="btn-l3" onclick="checkLockedLevel()">Verrouillé (RG3)</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ÉCRAN 3 : COURS & ATELIER PRATIQUE (JSPLITPANE) -->
+            <section class="screen-pane" id="s3">
+                <div class="ide-split">
+                    <!-- JTree Navigation -->
+                    <div class="file-tree">
+                        <div class="tree-root-label">Sommaire Niveau 2</div>
+                        <div class="tree-row" onclick="loadDoc(1)"><span class="file-badge badge-blue">CSS</span> 01_Introduction.css</div>
+                        <div class="tree-row" onclick="loadDoc(2)"><span class="file-badge badge-blue">CSS</span> 02_Selecteurs.css</div>
+                        <div class="tree-row active" onclick="loadDoc(3)"><span class="file-badge badge-blue">CSS</span> 03_Flexbox_Align.css</div>
+                        <div class="tree-root-label" style="margin-top:10px;">Évaluation</div>
+                        <div class="tree-row" style="color:#10b981; font-weight:600;" onclick="startTest()"><span class="file-badge badge-green">TEST</span> Test_Validation.eval</div>
+                    </div>
+
+                    <!-- Document de Cours -->
+                    <div class="lesson-sheet" id="doc-text-area">
+                        <h3>Chapitre 3 : Alignements avec Flexbox</h3>
+                        <p>La propriété <code>justify-content</code> régit l'espacement et l'alignement des éléments le long de l'axe principal.</p>
+                        
+                        <div class="code-box">
+.conteneur {<br>
+&nbsp;&nbsp;display: flex;<br>
+&nbsp;&nbsp;justify-content: space-between;<br>
+}
+                        </div>
+
+                        <p><strong>Exercice pratique :</strong> Modifiez le code dans l'éditeur de droite en utilisant <code>justify-content: center;</code> ou <code>space-between;</code>, puis cliquez sur <strong>"Exécuter le code"</strong> pour observer le déplacement élastique des blocs.</p>
+                    </div>
+
+                    <!-- Éditeur de Code et Rendu Live -->
+                    <div class="code-workbench" id="workbench-box">
+                        <div class="workbench-header">
+                            <span>style.css &bull; RSyntaxTextArea</span>
+                            <span style="color:#4ade80;">● Syntaxe valide</span>
+                        </div>
+                        
+                        <textarea class="code-editor-area" id="real-code-editor">
+.conteneur {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</textarea>
+
+                        <!-- Zone de rendu graphique direct -->
+                        <div class="render-canvas-box">
+                            <span class="render-canvas-label">Aperçu du rendu navigateur embarqué :</span>
+                            <div class="render-viewport" id="viewport-stage" style="justify-content: space-between;">
+                                <div class="render-block">Bloc A</div>
+                                <div class="render-block">Bloc B</div>
+                                <div class="render-block">Bloc C</div>
+                            </div>
+                        </div>
+
+                        <div class="workbench-footer">
+                            <span style="font-size:0.72rem; color:var(--text-tertiary); font-family:var(--font-mono);">CSS3 Native</span>
+                            <button class="btn-run-code" onclick="executeEditorCode()">▶ Exécuter le code</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ÉCRAN 4 : ÉVALUATION ET TEST CHRONOMÉTRÉ -->
+            <section class="screen-pane" id="s4">
+                <div class="exam-layout">
+                    <div class="exam-header">
+                        <div class="exam-title-grp">
+                            <h3>Test Certifiant &mdash; Niveau 2 (CSS &amp; Flexbox)</h3>
+                            <p id="exam-progress-counter">Question 1 sur 3 &bull; Seuil requis : 70%</p>
+                        </div>
+                        <div class="exam-timer" id="clock-display">14:59</div>
+                    </div>
+
+                    <div class="q-text" id="exam-q-statement">
+                        Énoncé de la question en cours...
+                    </div>
+
+                    <div class="q-choices" id="exam-choices-list">
+                        <!-- Généré en JS -->
+                    </div>
+
+                    <div class="exam-controls">
+                        <span style="font-size:0.78rem; color:var(--text-secondary);" id="exam-attempt-label">Tentative 1 sur 2 autorisées</span>
+                        <button class="btn-exam-next" id="btn-next-action" onclick="onNextQuestionClick()">
+                            Question suivante &rarr;
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ÉCRAN 5 : RELEVÉ DE NOTE & DÉLIBÉRATION -->
+            <section class="screen-pane" id="s5">
+                <div class="grade-sheet">
+                    <div class="grade-top">
+                        <div class="grade-badge" id="eval-score-badge">85%</div>
+                        <div class="grade-info">
+                            <h3 id="eval-title">Niveau 2 Validé avec Succès</h3>
+                            <p id="eval-subtitle">Décision pédagogique enregistrée dans la base SQLite</p>
+                        </div>
+                    </div>
+
+                    <div class="decision-box unlocked" id="eval-decision-box">
+                        <strong id="decision-title" style="color:var(--text-primary);">Conditions de passage satisfaites (Règle RG2 &amp; RG3) :</strong>
+                        <p id="decision-desc" style="color:var(--text-secondary); margin-top:4px;">
+                            La note obtenue est supérieure ou égale au seuil fixé à 70%. Le Niveau 3 (JavaScript) a été déverrouillé automatiquement.
+                        </p>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:10px;">
+                        <button class="btn-card" style="background:var(--bg-subtle);" onclick="showScreen('s2')">Retour au tableau de bord</button>
+                        <button class="btn-card btn-card-active" id="btn-proceed-l3" onclick="openLevelThree()">Accéder au Niveau 3 &rarr;</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ÉCRAN 6 : ESPACE ENSEIGNANT -->
+            <section class="screen-pane" id="s6">
+                <!-- Stat Widgets Enseignant Colorés -->
+                <div class="teacher-stats-row">
+                    <div class="stat-widget widget-blue">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-body">
+                            <div class="stat-val">34</div>
+                            <div class="stat-lbl">Étudiants Inscrits (L3)</div>
+                        </div>
+                    </div>
+                    <div class="stat-widget widget-green">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-body">
+                            <div class="stat-val">78%</div>
+                            <div class="stat-lbl">Taux de Réussite Global</div>
+                        </div>
+                    </div>
+                    <div class="stat-widget widget-purple">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-body">
+                            <div class="stat-val">2.1</div>
+                            <div class="stat-lbl">Niveau Moyen Atteint</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="teacher-view">
+                    <!-- Configuration Pédagogique -->
+                    <div class="config-card">
+                        <h4>Paramétrage Pédagogique (Niveau 2)</h4>
+                        
+                        <div class="param-field">
+                            <div class="param-header">
+                                <span>Seuil d'admission</span>
+                                <strong id="param-threshold-display">70%</strong>
+                            </div>
+                            <input type="range" class="slider-control" min="50" max="90" value="70" oninput="updateTeacherThreshold(this.value)">
+                        </div>
+
+                        <div class="param-field">
+                            <div class="param-header">
+                                <span>Durée du test</span>
+                                <strong>15 min</strong>
+                            </div>
+                            <input type="range" class="slider-control" min="5" max="30" value="15">
+                        </div>
+
+                        <div class="param-field">
+                            <div class="param-header">
+                                <span>Tentatives autorisées</span>
+                                <strong>2 essais</strong>
+                            </div>
+                            <input type="range" class="slider-control" min="1" max="4" value="2">
+                        </div>
+
+                        <button class="btn-submit-auth" style="margin-top:6px;" onclick="saveThresholdRule()">Enregistrer la règle</button>
+                    </div>
+
+                    <!-- JTable Suivi des Étudiants -->
+                    <div class="data-table-card">
+                        <div class="table-filter-bar">
+                            <span style="font-size:0.85rem; font-weight:700;">Registre de suivi de promotion (JTable)</span>
+                            <input type="text" class="input-text" style="width:180px; padding:6px 10px; font-size:0.78rem;" placeholder="Filtrer un étudiant..." onkeyup="filterStudentRows(this.value)">
+                        </div>
+
+                        <table class="std-table" id="student-register">
+                            <thead>
+                                <tr>
+                                    <th>Étudiant</th>
+                                    <th>Niveau Actuel</th>
+                                    <th>Essais</th>
+                                    <th>Note</th>
+                                    <th>Statut de passage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="row-yacine">
+                                    <td><strong>Yacine Benali</strong></td>
+                                    <td id="tbl-yacine-lvl">Niveau 2</td>
+                                    <td id="tbl-yacine-att">0 / 2</td>
+                                    <td id="tbl-yacine-score"><span style="color:var(--text-tertiary);">&mdash;</span></td>
+                                    <td id="tbl-yacine-status"><span style="color:#2563eb; font-weight:600;">En cours</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Amina Khelifi</strong></td>
+                                    <td>Niveau 2</td>
+                                    <td>2 / 2</td>
+                                    <td><span class="pill-score score-ko">55%</span></td>
+                                    <td><span style="color:#b91c1c; font-weight:600;">Bloqué (Échec)</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Karim Taleb</strong></td>
+                                    <td>Niveau 1</td>
+                                    <td>0 / 2</td>
+                                    <td><span style="color:var(--text-tertiary);">&mdash;</span></td>
+                                    <td><span style="color:#2563eb; font-weight:600;">En cours</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sarah Meziane</strong></td>
+                                    <td>Niveau 3</td>
+                                    <td>1 / 2</td>
+                                    <td><span class="pill-score score-ok">92%</span></td>
+                                    <td><span style="color:#15803d; font-weight:600;">Validé</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- 5. StatusBar Swing -->
+        <footer class="swing-statusbar">
+            <div class="status-left">
+                <span class="status-item">Prêt</span>
+                <span class="status-item">&bull; SQLite: learnweb.db (Connecté)</span>
+                <span class="status-item" id="status-level-item">&bull; Niveau actif : 2</span>
+            </div>
+            <div class="status-right">
+                <span>UTF-8</span>
+                <span>Java 17+ (Swing)</span>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Dialogue Modal Swing (JOptionPane) -->
+    <div class="modal-shade" id="joptionpane-dialog">
+        <div class="swing-modal">
+            <div class="modal-bar">Confirmation de soumission &bull; JOptionPane.showConfirmDialog</div>
+            <div class="modal-body">
+                Êtes-vous certain de vouloir soumettre vos réponses pour évaluation ? Le résultat sera calculé immédiatement et déterminera l'accès au niveau suivant.
+            </div>
+            <div class="modal-footer">
+                <button class="btn-m-cancel" onclick="closeModal()">Modifier mes réponses</button>
+                <button class="btn-m-confirm" onclick="confirmExamSubmission()">Confirmer et soumettre</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tiroir Latéral Fiche Ergonomique (Bastien & Scapin) -->
+    <aside class="ergo-drawer" id="ergo-drawer">
+        <div class="drawer-head">
+            <h3>Critères Ergonomiques IHM</h3>
+            <button class="btn-ergo-toggle" onclick="toggleErgoDrawer()">Fermer</button>
+        </div>
+        <div class="drawer-body">
+            <div class="ergo-item">
+                <div class="ergo-tag">1. Guidage &amp; Incitation</div>
+                <div class="ergo-text">Les statuts des niveaux (Validé vert, En cours bleu, Verrouillé gris) sont identifiables par leur couleur et leur bordure sans ambiguïté.</div>
+                <div class="ergo-swing">Composants : JProgressBar, BorderFactory</div>
+            </div>
+            <div class="ergo-item">
+                <div class="ergo-tag">2. Charge de travail &amp; Concision</div>
+                <div class="ergo-text">L'atelier de code est directement intégré à côté du cours (JSplitPane) pour éviter les allers-retours cognitifs avec des outils externes.</div>
+                <div class="ergo-swing">Composants : JSplitPane, RSyntaxTextArea</div>
+            </div>
+            <div class="ergo-item">
+                <div class="ergo-tag">3. Prévention des erreurs</div>
+                <div class="ergo-text">L'évaluation est protégée par une boîte modale de confirmation (JOptionPane) avant enregistrement irréversible de la tentative.</div>
+                <div class="ergo-swing">Composants : JOptionPane.showConfirmDialog</div>
+            </div>
+            <div class="ergo-item">
+                <div class="ergo-tag">4. Automatisation Pédagogique (RG3)</div>
+                <div class="ergo-text">Le déblocage du niveau suivant est déclenché côté système dès que la note calculée atteint le seuil déterminé par l'enseignant.</div>
+                <div class="ergo-swing">Contrôleur : LevelProgressionManager</div>
+            </div>
+            <div class="ergo-item">
+                <div class="ergo-tag">5. Adaptabilité &amp; Rôles</div>
+                <div class="ergo-text">Séparation stricte des privilèges entre l'Apprenant (parcours guidé) et l'Enseignant (table de suivi et réglage des paramètres).</div>
+                <div class="ergo-swing">Composants : CardLayout, TableRowSorter</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Moteur d'Interaction Réel & Animations Fluides -->
+    <script>
+        const app = {
+            threshold: 70,
+            level2Passed: false,
+            level2Attempts: 0,
+            maxAttempts: 2,
+            currentQIdx: 0,
+            answers: [null, null, null],
+            timerSec: 15 * 60,
+            timerHandle: null
+        };
+
+        const questions = [
+            {
+                q: "Quelle propriété CSS permet de modifier l'axe principal d'un conteneur Flexbox afin de disposer ses enfants verticalement ?",
+                options: [
+                    "flex-wrap: wrap;",
+                    "flex-direction: column;",
+                    "align-items: vertical;",
+                    "display: block-flex;"
+                ],
+                answer: 1
+            },
+            {
+                q: "Quelle valeur de 'justify-content' aligne les éléments enfants au centre de l'axe principal ?",
+                options: [
+                    "center",
+                    "space-between",
+                    "flex-start",
+                    "baseline"
+                ],
+                answer: 0
+            },
+            {
+                q: "Quelle propriété est employée pour contrôler l'alignement le long de l'axe secondaire (cross axis) ?",
+                options: [
+                    "align-items",
+                    "justify-items",
+                    "cross-direction",
+                    "flex-cross"
+                ],
+                answer: 0
+            }
+        ];
+
+        function toggleColorTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            notify(`Thème basculé en mode ${next === 'light' ? 'Clair moderne' : 'Sombre'}.`);
+        }
+
+        function notify(msg) {
+            const toast = document.getElementById('toast-el');
+            document.getElementById('toast-txt').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2600);
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
+
+            const target = document.getElementById(id);
+            if (target) target.classList.add('active');
+
+            const tabBtn = document.getElementById('btn-tab-' + id);
+            if (tabBtn) tabBtn.classList.add('active');
+
+            const names = {
+                s1: "Authentification",
+                s2: "Tableau de bord & Parcours",
+                s3: "Atelier Pédagogique (JSplitPane)",
+                s4: "Test d'Évaluation Chronométré",
+                s5: "Relevé de Délibération",
+                s6: "Espace Gestion Enseignant"
+            };
+            document.getElementById('caption-route').innerText = names[id] || "Application";
+        }
+
+        function pickRole(btn, role) {
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const input = document.getElementById('auth-login');
+            if (role === 'Apprenant') input.value = "yacine.benali@univ.dz";
+            else if (role === 'Enseignant') input.value = "prof.meziani@univ.dz";
+            else input.value = "admin.system@univ.dz";
+        }
+
+        function loginAction() {
+            notify("Session ouverte avec succès.");
+            showScreen('s2');
+        }
+
+        function openLesson(lvl) {
+            if (lvl === 1) notify("Support du Niveau 1 (Validé).");
+            showScreen('s3');
+        }
+
+        function loadDoc(chap) {
+            document.querySelectorAll('.file-tree .tree-row').forEach(r => r.classList.remove('active'));
+            const rows = document.querySelectorAll('.file-tree .tree-row');
+            if (rows[chap-1]) rows[chap-1].classList.add('active');
+
+            const area = document.getElementById('doc-text-area');
+            const ed = document.getElementById('real-code-editor');
+
+            if (chap === 1) {
+                area.innerHTML = `<h3>Chapitre 1 : Introduction CSS</h3><p>Notions fondamentales de cascade et de règles de style.</p><div class="code-box">body { margin: 0; font-family: sans-serif; }</div>`;
+                ed.value = "/* Chapitre 1 */\nbody {\n  margin: 0;\n}";
+            } else if (chap === 2) {
+                area.innerHTML = `<h3>Chapitre 2 : Sélecteurs &amp; Règles</h3><p>Sélecteurs de classe, d'identifiant et pseudo-classes.</p><div class="code-box">.card { border-radius: 4px; padding: 12px; }</div>`;
+                ed.value = ".card {\n  padding: 12px;\n  background: #222;\n}";
+            } else {
+                area.innerHTML = `<h3>Chapitre 3 : Alignements avec Flexbox</h3><p>La propriété <code>justify-content</code> contrôle la répartition sur l'axe principal.</p><div class="code-box">.conteneur {\n  display: flex;\n  justify-content: space-between;\n}</div><p><strong>Exercice pratique :</strong> Essayez <code>justify-content: center;</code> ou <code>space-between;</code> puis cliquez sur "Exécuter le code".</p>`;
+                ed.value = ".conteneur {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}";
+            }
+            notify(`Chapitre ${chap} chargé.`);
+        }
+
+        function executeEditorCode() {
+            const code = document.getElementById('real-code-editor').value;
+            const stage = document.getElementById('viewport-stage');
+            const box = document.getElementById('workbench-box');
+
+            box.classList.add('flash-success');
+            setTimeout(() => box.classList.remove('flash-success'), 400);
+
+            if (code.includes('center')) {
+                stage.style.justifyContent = 'center';
+            } else if (code.includes('flex-end')) {
+                stage.style.justifyContent = 'flex-end';
+            } else if (code.includes('flex-start')) {
+                stage.style.justifyContent = 'flex-start';
+            } else {
+                stage.style.justifyContent = 'space-between';
+            }
+
+            if (code.includes('column')) {
+                stage.style.flexDirection = 'column';
+            } else {
+                stage.style.flexDirection = 'row';
+            }
+
+            notify("Rendu graphique exécuté avec succès.");
+        }
+
+        function startTest() {
+            if (app.level2Attempts >= app.maxAttempts && !app.level2Passed) {
+                notify("Nombre maximal de tentatives atteint (2/2).");
+                return;
+            }
+            app.currentQIdx = 0;
+            app.answers = [null, null, null];
+            renderQuestion(0);
+            startClock();
+            showScreen('s4');
+            notify("Évaluation démarrée.");
+        }
+
+        function renderQuestion(idx) {
+            const q = questions[idx];
+            document.getElementById('exam-progress-counter').innerText = `Question ${idx + 1} sur ${questions.length} &bull; Seuil requis : ${app.threshold}%`;
+            document.getElementById('exam-q-statement').innerText = q.q;
+            document.getElementById('exam-attempt-label').innerText = `Tentative ${app.level2Attempts + 1} sur ${app.maxAttempts}`;
+
+            const cont = document.getElementById('exam-choices-list');
+            cont.innerHTML = '';
+
+            q.options.forEach((opt, i) => {
+                const isSelected = app.answers[idx] === i;
+                const div = document.createElement('div');
+                div.className = `choice-item ${isSelected ? 'selected' : ''}`;
+                div.onclick = () => {
+                    app.answers[idx] = i;
+                    renderQuestion(idx);
+                };
+                div.innerHTML = `<div class="choice-bullet"></div><span><code>${opt}</code></span>`;
+                cont.appendChild(div);
+            });
+
+            document.getElementById('btn-next-action').innerHTML = (idx === questions.length - 1) ? "Soumettre le test &rarr;" : "Question suivante &rarr;";
+        }
+
+        function onNextQuestionClick() {
+            if (app.answers[app.currentQIdx] === null) {
+                notify("Veuillez sélectionner une réponse.");
+                return;
+            }
+
+            if (app.currentQIdx < questions.length - 1) {
+                app.currentQIdx++;
+                renderQuestion(app.currentQIdx);
+            } else {
+                document.getElementById('joptionpane-dialog').classList.add('visible');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('joptionpane-dialog').classList.remove('visible');
+        }
+
+        function animateNumberCount(targetVal, elementId) {
+            let current = 0;
+            const el = document.getElementById(elementId);
+            const step = Math.ceil(targetVal / 25);
+            const interval = setInterval(() => {
+                current += step;
+                if (current >= targetVal) {
+                    current = targetVal;
+                    clearInterval(interval);
+                }
+                el.innerText = current + "%";
+            }, 25);
+        }
+
+        function confirmExamSubmission() {
+            closeModal();
+            clearInterval(app.timerHandle);
+            app.level2Attempts++;
+
+            let points = 0;
+            questions.forEach((q, i) => {
+                if (app.answers[i] === q.answer) points++;
+            });
+            const score = Math.round((points / questions.length) * 100);
+
+            // Mise à jour de la table enseignant
+            document.getElementById('tbl-yacine-att').innerText = `${app.level2Attempts} / ${app.maxAttempts}`;
+            document.getElementById('tbl-yacine-score').innerHTML = `<span class="pill-score ${score >= app.threshold ? 'score-ok' : 'score-ko'}">${score}%</span>`;
+
+            if (score >= app.threshold) {
+                // SUCCÈS
+                app.level2Passed = true;
+
+                document.getElementById('eval-score-badge').className = "grade-badge";
+                animateNumberCount(score, 'eval-score-badge');
+
+                document.getElementById('eval-title').innerText = "Niveau 2 Validé avec Succès";
+                document.getElementById('eval-subtitle').innerText = "Admis au passage de niveau supérieur (Règle RG3)";
+                document.getElementById('eval-decision-box').className = "decision-box unlocked";
+                document.getElementById('decision-title').innerText = "Décision : Validation conforme aux exigences pédagogiques";
+                document.getElementById('decision-desc').innerText = `Note finale de ${score}% supérieure au seuil d'admission (${app.threshold}%). Le Niveau 3 (JavaScript & DOM) a été déverrouillé automatiquement dans votre cursus.`;
+                document.getElementById('btn-proceed-l3').style.display = "inline-block";
+
+                // Mise à jour du Dashboard
+                document.getElementById('card-l2').className = "matrix-card status-done";
+                document.getElementById('chip-l2').className = "pill-state pill-done";
+                document.getElementById('chip-l2').innerText = `✓ Validé (${score}%)`;
+
+                // Déverrouillage Niveau 3
+                const card3 = document.getElementById('card-l3');
+                card3.className = "matrix-card status-current";
+                document.getElementById('chip-l3').className = "pill-state pill-current";
+                document.getElementById('chip-l3').innerText = "Débloqué";
+                const btn3 = document.getElementById('btn-l3');
+                btn3.className = "btn-card btn-card-active";
+                btn3.innerText = "Commencer le Niveau 3";
+
+                // Progression globale
+                document.getElementById('dash-prog-percent').innerText = "66% (2/3 validés)";
+                document.getElementById('dash-prog-bar').style.width = "66%";
+                document.getElementById('tbl-yacine-lvl').innerText = "Niveau 3";
+                document.getElementById('tbl-yacine-status').innerHTML = "<span style='color:#15803d; font-weight:700;'>Validé</span>";
+
+                notify("Validation confirmée : Niveau 3 déverrouillé !");
+            } else {
+                // ÉCHEC
+                document.getElementById('eval-score-badge').className = "grade-badge failed";
+                animateNumberCount(score, 'eval-score-badge');
+
+                document.getElementById('eval-title').innerText = "Seuil d'Admission Non Atteint";
+                document.getElementById('eval-subtitle').innerText = "Le niveau courant doit être consolidé (Règle RG4)";
+                document.getElementById('eval-decision-box').className = "decision-box locked";
+                document.getElementById('decision-title').innerText = "Décision : Niveau 3 maintenu verrouillé";
+                document.getElementById('decision-desc').innerText = `La note de ${score}% est inférieure au seuil de ${app.threshold}%. Il vous reste ${app.maxAttempts - app.level2Attempts} tentative(s). Veuillez reprendre les exercices avant de retenter.`;
+                document.getElementById('btn-proceed-l3').style.display = "none";
+                document.getElementById('lbl-att-l2').innerText = `${app.level2Attempts}/${app.maxAttempts}`;
+
+                document.getElementById('tbl-yacine-status').innerHTML = "<span style='color:#b91c1c; font-weight:700;'>Non validé</span>";
+                notify("Score insuffisant.");
+            }
+
+            showScreen('s5');
+        }
+
+        function checkLockedLevel() {
+            if (!app.level2Passed) {
+                notify("Niveau verrouillé : vous devez valider le Niveau 2.");
+            } else {
+                openLevelThree();
+            }
+        }
+
+        function openLevelThree() {
+            notify("Ouverture du Niveau 3 : JavaScript & DOM.");
+            showScreen('s2');
+        }
+
+        function startClock() {
+            clearInterval(app.timerHandle);
+            app.timerSec = 15 * 60;
+            app.timerHandle = setInterval(() => {
+                app.timerSec--;
+                const m = Math.floor(app.timerSec / 60);
+                const s = app.timerSec % 60;
+                document.getElementById('clock-display').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+                if (app.timerSec <= 0) {
+                    clearInterval(app.timerHandle);
+                    confirmExamSubmission();
+                }
+            }, 1000);
+        }
+
+        function updateTeacherThreshold(val) {
+            app.threshold = parseInt(val);
+            document.getElementById('param-threshold-display').innerText = val + "%";
+            document.getElementById('lbl-seuil-l2').innerText = val + "%";
+        }
+
+        function saveThresholdRule() {
+            notify(`Règle enregistrée en base : Seuil fixé à ${app.threshold}%.`);
+        }
+
+        function filterStudentRows(query) {
+            const rows = document.querySelectorAll('#student-register tbody tr');
+            rows.forEach(r => {
+                r.style.display = r.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
+            });
+        }
+
+        function toggleErgoDrawer() {
+            document.getElementById('ergo-drawer').classList.toggle('open');
+        }
+
+        // Init
+        showScreen('s1');
+    </script>
+</body>
+</html>
