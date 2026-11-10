@@ -398,19 +398,32 @@ public class DevALabsApp extends JFrame {
         // Affiche la toolbar dédiée
         toolBarCardLayout.show(toolBarCardPanel, space);
 
+        // MASQUAGE TOTAL DU HEADER : l'étudiant ne voit JAMAIS les boutons Enseignant ou Admin !
         if (space.equals(SPACE_APPRENANT)) {
+            btnSpacePillApprenant.setVisible(true);
+            btnSpacePillEnseignant.setVisible(false); // CACHÉ POUR L'ÉTUDIANT
+            btnSpacePillAdmin.setVisible(false);      // CACHÉ POUR L'ÉTUDIANT
             lblUserSessionTag.setText("Session : yacine.benali (L3 Informatique)");
             dotSessionStatus.setBackground(COLOR_PRIMARY);
             showCard(CARD_DASHBOARD, "Espace Apprenant • Cursus");
         } else if (space.equals(SPACE_ENSEIGNANT)) {
+            btnSpacePillApprenant.setVisible(false);  // CACHÉ POUR L'ENSEIGNANT
+            btnSpacePillEnseignant.setVisible(true);
+            btnSpacePillAdmin.setVisible(false);      // CACHÉ POUR L'ENSEIGNANT
             lblUserSessionTag.setText("Session : Dr. Meziani (Responsable Pédagogique)");
             dotSessionStatus.setBackground(new Color(139, 92, 246));
             showCard(CARD_TEACHER, "Espace Enseignant • Pilotage Pédagogique");
         } else if (space.equals(SPACE_ADMIN)) {
+            btnSpacePillApprenant.setVisible(false);
+            btnSpacePillEnseignant.setVisible(false);
+            btnSpacePillAdmin.setVisible(true);
             lblUserSessionTag.setText("Session : Admin Système (DEVA LABS)");
             dotSessionStatus.setBackground(new Color(225, 29, 72));
             showCard(CARD_ADMIN, "Espace Administrateur • Supervision");
         } else if (space.equals(SPACE_LOGIN)) {
+            btnSpacePillApprenant.setVisible(false);
+            btnSpacePillEnseignant.setVisible(false);
+            btnSpacePillAdmin.setVisible(false);
             lblUserSessionTag.setText("Non authentifié");
             dotSessionStatus.setBackground(COLOR_TEXT_MUTED);
             showCard(CARD_AUTH, "Portail d'Authentification");
