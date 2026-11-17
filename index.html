@@ -2421,20 +2421,17 @@
         </div>
         <div class="academic-actions">
             <!-- Sélecteur d'Espaces Dédiés (Apprenant / Enseignant / Admin) -->
-            <div class="space-nav-bar" id="top-space-nav-bar" style="display:none;">
-                <span class="space-label">Espace actif :</span>
-                <!-- Badge Apprenant (Visible UNIQUEMENT pour l'étudiant) -->
-                <span class="btn-space-pill active" id="badge-space-apprenant" style="display:none; cursor:default;">
-                    <span>🎓</span> Espace Apprenant (Étudiant)
-                </span>
-                <!-- Badge Enseignant (Visible UNIQUEMENT pour l'enseignant) -->
-                <span class="btn-space-pill pill-enseignant active" id="badge-space-enseignant" style="display:none; cursor:default;">
-                    <span>👨‍🏫</span> Espace Enseignant (Professeur)
-                </span>
-                <!-- Badge Admin (Visible UNIQUEMENT pour l'administrateur) -->
-                <span class="btn-space-pill pill-admin active" id="badge-space-admin" style="display:none; cursor:default;">
-                    <span>⚙️</span> Espace Administrateur (Root)
-                </span>
+            <div class="space-nav-bar" id="top-space-nav-bar">
+                <span class="space-label">ESPACES DÉDIÉS :</span>
+                <button class="btn-space-pill active" id="badge-space-apprenant" onclick="switchSpace('Apprenant')" title="Basculer vers l'Espace Apprenant">
+                    <span>🎓</span> Espace Apprenant
+                </button>
+                <button class="btn-space-pill pill-enseignant" id="badge-space-enseignant" onclick="switchSpace('Enseignant')" title="Basculer vers l'Espace Enseignant">
+                    <span>👨‍🏫</span> Espace Enseignant
+                </button>
+                <button class="btn-space-pill pill-admin" id="badge-space-admin" onclick="switchSpace('Admin')" title="Basculer vers l'Espace Administrateur">
+                    <span>⚙️</span> Espace Administrateur
+                </button>
             </div>
 
             <!-- Bouton Bascule Thème Clair / Sombre -->
@@ -2455,9 +2452,9 @@
         <div class="window-titlebar">
             <div class="titlebar-left">
                 <div class="window-dots">
-                    <span class="w-dot w-close" title="Fermer"></span>
-                    <span class="w-dot w-min" title="Réduire"></span>
-                    <span class="w-dot w-max" title="Agrandir"></span>
+                    <span class="w-dot w-close" title="Fermer la session" onclick="windowAction('close')"></span>
+                    <span class="w-dot w-min" title="Réduire" onclick="windowAction('min')"></span>
+                    <span class="w-dot w-max" title="Plein écran" onclick="windowAction('max')"></span>
                 </div>
                 <div class="app-caption">
                     <strong>DEVA LABS Studio</strong> &mdash; <span id="caption-route">Authentification</span>
@@ -2468,10 +2465,10 @@
 
         <!-- 2. JMenuBar Swing Réel -->
         <div class="swing-menubar">
-            <span class="menu-item menu-item-fichier" onclick="notify('Menu Fichier : Gestion des projets &amp; exports')">Fichier</span>
-            <span class="menu-item menu-item-edition" onclick="notify('Menu Édition : Préférences &amp; configuration du compilateur')">Édition</span>
-            <span class="menu-item menu-item-parcours" onclick="showScreen('s2')">Parcours</span>
-            <span class="menu-item menu-item-pedagogie" onclick="showScreen('s6')">Pédagogie</span>
+            <span class="menu-item menu-item-fichier" onclick="menuFichierAction()">Fichier ▾</span>
+            <span class="menu-item menu-item-edition" onclick="resetDemoState()">Édition (Reset)</span>
+            <span class="menu-item menu-item-parcours" onclick="switchSpace('Apprenant'); showScreen('s2');">Parcours</span>
+            <span class="menu-item menu-item-pedagogie" onclick="switchSpace('Enseignant');">Pédagogie</span>
             <span class="menu-item menu-item-aide" onclick="toggleErgoDrawer()">Aide &amp; Ergonomie</span>
         </div>
 
@@ -2633,10 +2630,11 @@
                 <div class="ide-split">
                     <!-- JTree Navigation -->
                     <div class="file-tree">
-                        <div class="tree-root-label">Sommaire Niveau 2</div>
-                        <div class="tree-row" onclick="loadDoc(1)"><span class="file-badge badge-blue">CSS</span> 01_Introduction.css</div>
+                        <div class="tree-root-label">Sommaire du Cursus</div>
+                        <div class="tree-row" onclick="loadDoc(1)"><span class="file-badge badge-blue">HTML</span> 01_Structure_HTML.html</div>
                         <div class="tree-row" onclick="loadDoc(2)"><span class="file-badge badge-blue">CSS</span> 02_Selecteurs.css</div>
                         <div class="tree-row active" onclick="loadDoc(3)"><span class="file-badge badge-blue">CSS</span> 03_Flexbox_Align.css</div>
+                        <div class="tree-row" onclick="loadDoc(4)"><span class="file-badge badge-green">JS</span> 04_DOM_JavaScript.js</div>
                         <div class="tree-root-label" style="margin-top:10px;">Évaluation</div>
                         <div class="tree-row" style="color:#10b981; font-weight:600;" onclick="startTest()"><span class="file-badge badge-green">TEST</span> Test_Validation.eval</div>
                     </div>
@@ -2785,17 +2783,17 @@
                         <div class="param-field">
                             <div class="param-header">
                                 <span>Durée du test</span>
-                                <strong>15 min</strong>
+                                <strong id="param-time-display">15 min</strong>
                             </div>
-                            <input type="range" class="slider-control" min="5" max="30" value="15">
+                            <input type="range" class="slider-control" min="5" max="30" value="15" oninput="updateTeacherTime(this.value)">
                         </div>
 
                         <div class="param-field">
                             <div class="param-header">
                                 <span>Tentatives autorisées</span>
-                                <strong>2 essais</strong>
+                                <strong id="param-attempts-display">2 essais</strong>
                             </div>
-                            <input type="range" class="slider-control" min="1" max="4" value="2">
+                            <input type="range" class="slider-control" min="1" max="4" value="2" oninput="updateTeacherAttempts(this.value)">
                         </div>
 
                         <button class="btn-submit-auth" style="margin-top:6px;" onclick="saveThresholdRule()">Enregistrer la règle</button>
@@ -3097,6 +3095,9 @@
             }
         ];
 
+        let currentLoggedRole = 'Apprenant';
+        let selectedLoginRole = 'Apprenant';
+
         function toggleColorTheme() {
             const html = document.documentElement;
             const current = html.getAttribute('data-theme');
@@ -3107,17 +3108,42 @@
 
         function notify(msg) {
             const toast = document.getElementById('toast-el');
+            if (!toast) return;
             document.getElementById('toast-txt').innerText = msg;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2600);
         }
 
-                function showScreen(id) {
-            // SÉCURITÉ STRICTE : Si connecté comme Apprenant, interdiction formelle d'ouvrir s6 (prof) ou s7 (admin)
-            if (currentLoggedRole === 'Apprenant' && (id === 's6' || id === 's7')) {
-                alert("⛔ ACCÈS REFUSÉ : Vous êtes étudiant. L'Espace Enseignant vous est strictement interdit.");
-                return;
+        function windowAction(act) {
+            if (act === 'close') {
+                if (confirm("Voulez-vous quitter l'espace de travail et revenir au portail de connexion ?")) {
+                    logoutAction();
+                }
+            } else if (act === 'min') {
+                notify("Fenêtre réduite dans la barre des tâches.");
+            } else if (act === 'max') {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                    notify("Mode plein écran activé.");
+                } else {
+                    document.exitFullscreen().catch(() => {});
+                    notify("Mode fenêtré restauré.");
+                }
             }
+        }
+
+        function menuFichierAction() {
+            const res = prompt("MENU FICHIER DEVA LABS :\n1. Exporter le relevé de notes (CSV/SQLite)\n2. Réinitialiser la session de démo\n3. Déconnexion\n\nEntrez 1, 2 ou 3 :", "1");
+            if (res === "1") {
+                notify("Exportation du relevé de notes vers releve_l3.csv réussie !");
+            } else if (res === "2") {
+                resetDemoState();
+            } else if (res === "3") {
+                logoutAction();
+            }
+        }
+
+        function showScreen(id) {
             document.querySelectorAll('.screen-pane').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
 
@@ -3136,19 +3162,9 @@
                 s6: "Espace Enseignant &bull; Pilotage Pédagogique",
                 s7: "Espace Administrateur &bull; Supervision Système"
             };
-            document.getElementById('caption-route').innerText = names[id] || "Application";
+            const caption = document.getElementById('caption-route');
+            if (caption) caption.innerHTML = names[id] || "Application";
         }
-
-        function pickRole(btn, role) {
-            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const input = document.getElementById('auth-login');
-            if (role === 'Apprenant') input.value = "yacine.benali@univ.dz";
-            else if (role === 'Enseignant') input.value = "prof.meziani@univ.dz";
-            else input.value = "admin.system@univ.dz";
-        }
-
-        let selectedLoginRole = 'Apprenant';
 
         function pickRole(btn, role) {
             document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
@@ -3164,9 +3180,68 @@
             switchSpace(selectedLoginRole);
         }
 
+        function updateHeaderBadges(role) {
+            const bApp = document.getElementById('badge-space-apprenant');
+            const bEns = document.getElementById('badge-space-enseignant');
+            const bAdm = document.getElementById('badge-space-admin');
+            if (bApp) bApp.classList.toggle('active', role === 'Apprenant');
+            if (bEns) bEns.classList.toggle('active', role === 'Enseignant');
+            if (bAdm) bAdm.classList.toggle('active', role === 'Admin');
+        }
+
+        function switchSpace(role) {
+            currentLoggedRole = (role === 'Login') ? null : role;
+            updateHeaderBadges(role);
+
+            const tLogin = document.getElementById('toolbar-s1');
+            const tApp = document.getElementById('toolbar-apprenant');
+            const tEns = document.getElementById('toolbar-enseignant');
+            const tAdm = document.getElementById('toolbar-admin');
+            if (tLogin) tLogin.style.display = 'none';
+            if (tApp) tApp.style.display = 'none';
+            if (tEns) tEns.style.display = 'none';
+            if (tAdm) tAdm.style.display = 'none';
+
+            const userStatus = document.getElementById('user-status-text');
+            const dot = document.getElementById('user-dot-status');
+
+            if (role === 'Apprenant') {
+                if (tApp) tApp.style.display = 'flex';
+                if (userStatus) userStatus.innerText = "Session : yacine.benali (L3 Informatique)";
+                if (dot) dot.style.background = "#2563eb";
+                showScreen('s2');
+                notify("Espace Apprenant activé.");
+            } else if (role === 'Enseignant') {
+                if (tEns) tEns.style.display = 'flex';
+                if (userStatus) userStatus.innerText = "Session : Dr. Meziani (Responsable Pédagogique)";
+                if (dot) dot.style.background = "#8b5cf6";
+                showScreen('s6');
+                notify("Espace Enseignant activé.");
+            } else if (role === 'Admin') {
+                if (tAdm) tAdm.style.display = 'flex';
+                if (userStatus) userStatus.innerText = "Session : Admin Système (DEVA LABS)";
+                if (dot) dot.style.background = "#e11d48";
+                showScreen('s7');
+                notify("Espace Administrateur activé.");
+            } else {
+                if (tLogin) tLogin.style.display = 'flex';
+                if (userStatus) userStatus.innerText = "Non connecté (Portail)";
+                if (dot) dot.style.background = "#94a3b8";
+                showScreen('s1');
+            }
+        }
+
+        function logoutAction() {
+            switchSpace('Login');
+            notify("Déconnexion réussie. Retour au portail central.");
+        }
+
         function openLesson(lvl) {
-            if (lvl === 1) notify("Support du Niveau 1 (Validé).");
             showScreen('s3');
+            loadDoc(lvl === 1 ? 1 : (lvl === 2 ? 3 : 4));
+            if (lvl === 1) notify("Support du Niveau 1 : HTML Structure & Sémantique.");
+            else if (lvl === 2) notify("Atelier du Niveau 2 : CSS Flexbox & Responsive.");
+            else if (lvl === 3) notify("Atelier du Niveau 3 : JavaScript & Manipulation DOM.");
         }
 
         function loadDoc(chap) {
@@ -3176,18 +3251,42 @@
 
             const area = document.getElementById('doc-text-area');
             const ed = document.getElementById('real-code-editor');
+            const stage = document.getElementById('viewport-stage');
 
             if (chap === 1) {
-                area.innerHTML = `<h3>Chapitre 1 : Introduction CSS</h3><p>Notions fondamentales de cascade et de règles de style.</p><div class="code-box">body { margin: 0; font-family: sans-serif; }</div>`;
-                ed.value = "/* Chapitre 1 */\nbody {\n  margin: 0;\n}";
+                area.innerHTML = `<h3>Chapitre 1 : Structure &amp; Sémantique HTML (Niveau 1)</h3>
+                    <p>Découverte de l'arborescence du document HTML5, formulaires et balises sémantiques.</p>
+                    <div class="code-box">&lt;main class="card"&gt;<br>&nbsp;&nbsp;&lt;h1&gt;Bienvenue sur DEVA LABS&lt;/h1&gt;<br>&nbsp;&nbsp;&lt;p&gt;Apprentissage par niveaux.&lt;/p&gt;<br>&lt;/main&gt;</div>
+                    <p><b>Exercice :</b> Modifiez le code dans l'éditeur ci-contre puis cliquez sur <b>'Exécuter le code'</b> pour injecter le rendu HTML.</p>`;
+                ed.value = '<div style="background:#2563eb;color:white;padding:14px;border-radius:10px;text-align:center;">\n  <h4>DEVA LABS &mdash; HTML Sémantique</h4>\n  <p>Composant structuré conforme WCAG 2.1.</p>\n  <button style="padding:6px 14px;background:white;color:#2563eb;border:none;border-radius:6px;font-weight:700;cursor:pointer;">Consulter</button>\n</div>';
+                stage.innerHTML = ed.value;
+                stage.style.justifyContent = 'center';
             } else if (chap === 2) {
-                area.innerHTML = `<h3>Chapitre 2 : Sélecteurs &amp; Règles</h3><p>Sélecteurs de classe, d'identifiant et pseudo-classes.</p><div class="code-box">.card { border-radius: 4px; padding: 12px; }</div>`;
-                ed.value = ".card {\n  padding: 12px;\n  background: #222;\n}";
+                area.innerHTML = `<h3>Chapitre 2 : Sélecteurs &amp; Règles CSS</h3>
+                    <p>Définition des classes, identifiants et propriétés de boîte.</p>
+                    <div class="code-box">.card { border-radius: 8px; padding: 12px; background: #06b6d4; }</div>
+                    <p><b>Exercice :</b> Personnalisez les styles des blocs ci-contre.</p>`;
+                ed.value = '.bloc {\n  background: #06b6d4;\n  color: white;\n  border-radius: 8px;\n  padding: 10px 18px;\n}';
+                stage.innerHTML = '<div class="render-block" style="background:#06b6d4;">Sélecteur A</div><div class="render-block" style="background:#0284c7;">Sélecteur B</div><div class="render-block" style="background:#38bdf8;">Sélecteur C</div>';
+                stage.style.justifyContent = 'space-around';
+            } else if (chap === 3) {
+                area.innerHTML = `<h3>Chapitre 3 : Alignements avec Flexbox (Niveau 2)</h3>
+                    <p>La propriété <code>justify-content</code> contrôle la répartition sur l'axe principal.</p>
+                    <div class="code-box">.conteneur {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}</div>
+                    <p><b>Exercice pratique :</b> Essayez <code>justify-content: center;</code>, <code>flex-end;</code>, <code>space-between;</code> ou <code>flex-direction: column;</code> puis cliquez sur <b>'Exécuter le code'</b> pour voir les blocs s'animer.</p>`;
+                ed.value = '.conteneur {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}';
+                stage.innerHTML = '<div class="render-block">Bloc A</div><div class="render-block">Bloc B</div><div class="render-block">Bloc C</div>';
+                stage.style.justifyContent = 'space-between';
+                stage.style.flexDirection = 'row';
             } else {
-                area.innerHTML = `<h3>Chapitre 3 : Alignements avec Flexbox</h3><p>La propriété <code>justify-content</code> contrôle la répartition sur l'axe principal.</p><div class="code-box">.conteneur {\n  display: flex;\n  justify-content: space-between;\n}</div><p><strong>Exercice pratique :</strong> Essayez <code>justify-content: center;</code> ou <code>space-between;</code> puis cliquez sur "Exécuter le code".</p>`;
-                ed.value = ".conteneur {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}";
+                area.innerHTML = `<h3>Chapitre 4 : JavaScript &amp; Manipulation du DOM (Niveau 3)</h3>
+                    <p>Manipulation dynamique des nœuds HTML, gestionnaires d'événements et requêtes asynchrones.</p>
+                    <div class="code-box">const counter = document.getElementById('js-counter');<br>counter.innerText = parseInt(counter.innerText) + 1;</div>
+                    <p><b>Exercice interactif :</b> Testez le composant interactif ci-contre en cliquant sur le bouton d'incrémentation !</p>`;
+                ed.value = '// Simulation JavaScript DOM\nlet clics = 0;\nfunction incrementer() {\n  clics++;\n  document.getElementById("js-counter").innerText = clics;\n}';
+                stage.innerHTML = '<div style="text-align:center;width:100%;"><span style="font-weight:700;font-size:0.95rem;color:var(--text-primary);">Compteur dynamique DOM : </span><strong id="js-counter" style="font-size:1.4rem;color:#10b981;">0</strong> clics<br><button onclick="let c=document.getElementById(\'js-counter\'); c.innerText=parseInt(c.innerText)+1; notify(\'Événement JS click capté avec succès !\');" style="margin-top:10px;padding:8px 18px;background:#10b981;color:white;border:none;border-radius:6px;font-weight:700;cursor:pointer;">⚡ Cliquer pour incrémenter</button></div>';
             }
-            notify(`Chapitre ${chap} chargé.`);
+            notify(`Chapitre ${chap} chargé dans l'atelier.`);
         }
 
         function executeEditorCode() {
@@ -3198,12 +3297,20 @@
             box.classList.add('flash-success');
             setTimeout(() => box.classList.remove('flash-success'), 400);
 
+            if (code.trim().startsWith('<')) {
+                stage.innerHTML = code;
+                notify("Rendu HTML injecté avec succès.");
+                return;
+            }
+
             if (code.includes('center')) {
                 stage.style.justifyContent = 'center';
             } else if (code.includes('flex-end')) {
                 stage.style.justifyContent = 'flex-end';
             } else if (code.includes('flex-start')) {
                 stage.style.justifyContent = 'flex-start';
+            } else if (code.includes('space-around')) {
+                stage.style.justifyContent = 'space-around';
             } else {
                 stage.style.justifyContent = 'space-between';
             }
@@ -3214,7 +3321,11 @@
                 stage.style.flexDirection = 'row';
             }
 
-            notify("Rendu graphique exécuté avec succès.");
+            if (code.includes('align-items: center')) {
+                stage.style.alignItems = 'center';
+            }
+
+            notify("Rendu graphique exécuté avec succès !");
         }
 
         function startTest() {
@@ -3227,7 +3338,7 @@
             renderQuestion(0);
             startClock();
             showScreen('s4');
-            notify("Évaluation démarrée.");
+            notify("Évaluation Niveau 2 démarrée.");
         }
 
         function renderQuestion(idx) {
@@ -3256,7 +3367,7 @@
 
         function onNextQuestionClick() {
             if (app.answers[app.currentQIdx] === null) {
-                notify("Veuillez sélectionner une réponse.");
+                notify("Veuillez sélectionner une réponse pour continuer.");
                 return;
             }
 
@@ -3312,7 +3423,7 @@
                 document.getElementById('eval-subtitle').innerText = "Admis au passage de niveau supérieur (Règle RG3)";
                 document.getElementById('eval-decision-box').className = "decision-box unlocked";
                 document.getElementById('decision-title').innerText = "Décision : Validation conforme aux exigences pédagogiques";
-                document.getElementById('decision-desc').innerText = `Note finale de ${score}% supérieure au seuil d'admission (${app.threshold}%). Le Niveau 3 (JavaScript & DOM) a été déverrouillé automatiquement dans votre cursus.`;
+                document.getElementById('decision-desc').innerText = `Note finale de ${score}% supérieure ou égale au seuil d'admission (${app.threshold}%). Le Niveau 3 (JavaScript & DOM) a été déverrouillé automatiquement dans votre cursus.`;
                 document.getElementById('btn-proceed-l3').style.display = "inline-block";
 
                 // Mise à jour du Dashboard
@@ -3350,7 +3461,7 @@
                 document.getElementById('lbl-att-l2').innerText = `${app.level2Attempts}/${app.maxAttempts}`;
 
                 document.getElementById('tbl-yacine-status').innerHTML = "<span style='color:#b91c1c; font-weight:700;'>Non validé</span>";
-                notify("Score insuffisant.");
+                notify("Score insuffisant : niveau maintenu.");
             }
 
             showScreen('s5');
@@ -3358,25 +3469,25 @@
 
         function checkLockedLevel() {
             if (!app.level2Passed) {
-                notify("Niveau verrouillé : vous devez valider le Niveau 2.");
+                notify("Niveau verrouillé : vous devez d'abord valider le Niveau 2 (Règle RG1/RG3).");
             } else {
                 openLevelThree();
             }
         }
 
         function openLevelThree() {
-            notify("Ouverture du Niveau 3 : JavaScript & DOM.");
-            showScreen('s2');
+            notify("Bienvenue dans le Niveau 3 : JavaScript & DOM !");
+            openLesson(3);
         }
 
         function startClock() {
             clearInterval(app.timerHandle);
-            app.timerSec = 15 * 60;
             app.timerHandle = setInterval(() => {
                 app.timerSec--;
                 const m = Math.floor(app.timerSec / 60);
                 const s = app.timerSec % 60;
-                document.getElementById('clock-display').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+                const clock = document.getElementById('clock-display');
+                if (clock) clock.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
                 if (app.timerSec <= 0) {
                     clearInterval(app.timerHandle);
                     confirmExamSubmission();
@@ -3390,8 +3501,24 @@
             document.getElementById('lbl-seuil-l2').innerText = val + "%";
         }
 
+        function updateTeacherTime(val) {
+            document.getElementById('param-time-display').innerText = val + " min";
+            app.timerSec = parseInt(val) * 60;
+        }
+
+        function updateTeacherAttempts(val) {
+            app.maxAttempts = parseInt(val);
+            document.getElementById('param-attempts-display').innerText = val + " essais";
+            document.getElementById('lbl-att-l2').innerText = app.level2Attempts + "/" + app.maxAttempts;
+        }
+
         function saveThresholdRule() {
-            notify(`Règle enregistrée en base : Seuil fixé à ${app.threshold}%.`);
+            notify(`Règles enregistrées en base SQLite : Seuil ${app.threshold}%, Durée ${document.getElementById('param-time-display').innerText}, Max ${app.maxAttempts} essais.`);
+            const consoleEl = document.getElementById('audit-log-stream');
+            if (consoleEl) {
+                const now = new Date().toTimeString().split(' ')[0];
+                consoleEl.innerHTML = `<div class="audit-line"><span class="audit-time">[${now}]</span> <span class="audit-tag-rule">[RG7]</span> prof.meziani a paramétré seuil=${app.threshold}%, essais=${app.maxAttempts}</div>` + consoleEl.innerHTML;
+            }
         }
 
         function filterStudentRows(query) {
@@ -3405,102 +3532,6 @@
             document.getElementById('ergo-drawer').classList.toggle('open');
         }
 
-        // Init
-        showScreen('s1');
-    
-        
-        // ========================================================
-        // GESTION MULTI-ESPACES : ISOLATION TOTALE DES RÔLES
-        // ========================================================
-        let currentLoggedRole = null;
-
-        function updateHeaderBadges(role) {
-            const bar = document.getElementById('top-space-nav-bar');
-            const bApp = document.getElementById('badge-space-apprenant');
-            const bEns = document.getElementById('badge-space-enseignant');
-            const bAdm = document.getElementById('badge-space-admin');
-
-            if (!bar) return;
-
-            if (role === 'Login' || !role) {
-                // Sur le portail de connexion : AUCUN badge d'espace en haut
-                bar.style.display = 'none';
-                if (bApp) bApp.style.display = 'none';
-                if (bEns) bEns.style.display = 'none';
-                if (bAdm) bAdm.style.display = 'none';
-            } else if (role === 'Apprenant') {
-                // EN TANT QU'ÉTUDIANT : L'espace enseignant et admin N'EXISTENT PAS dans le header !
-                bar.style.display = 'inline-flex';
-                if (bApp) bApp.style.display = 'inline-flex';
-                if (bEns) bEns.style.display = 'none';
-                if (bAdm) bAdm.style.display = 'none';
-            } else if (role === 'Enseignant') {
-                // EN TANT QU'ENSEIGNANT : Seul l'espace enseignant est visible !
-                bar.style.display = 'inline-flex';
-                if (bApp) bApp.style.display = 'none';
-                if (bEns) bEns.style.display = 'inline-flex';
-                if (bAdm) bAdm.style.display = 'none';
-            } else if (role === 'Admin') {
-                // EN TANT QU'ADMIN : Seul l'espace admin est visible !
-                bar.style.display = 'inline-flex';
-                if (bApp) bApp.style.display = 'none';
-                if (bEns) bEns.style.display = 'none';
-                if (bAdm) bAdm.style.display = 'inline-flex';
-            }
-        }
-
-        function switchSpace(role) {
-            currentLoggedRole = (role === 'Login') ? null : role;
-            updateHeaderBadges(role);
-
-            // Cacher toutes les toolbars
-            const tLogin = document.getElementById('toolbar-s1');
-            const tApp = document.getElementById('toolbar-apprenant');
-            const tEns = document.getElementById('toolbar-enseignant');
-            const tAdm = document.getElementById('toolbar-admin');
-            if (tLogin) tLogin.style.display = 'none';
-            if (tApp) tApp.style.display = 'none';
-            if (tEns) tEns.style.display = 'none';
-            if (tAdm) tAdm.style.display = 'none';
-
-            const userStatus = document.getElementById('user-status-text');
-            const dot = document.getElementById('user-dot-status');
-
-            if (role === 'Apprenant') {
-                if (tApp) tApp.style.display = 'flex';
-                if (userStatus) userStatus.innerText = "Session : yacine.benali (L3 Informatique)";
-                if (dot) dot.style.background = "#2563eb";
-                showScreen('s2');
-                notify("Connecté à votre Espace Apprenant.");
-            } else if (role === 'Enseignant') {
-                if (tEns) tEns.style.display = 'flex';
-                if (userStatus) userStatus.innerText = "Session : Dr. Meziani (Responsable Pédagogique)";
-                if (dot) dot.style.background = "#8b5cf6";
-                showScreen('s6');
-                notify("Connecté à votre Espace Enseignant.");
-            } else if (role === 'Admin') {
-                if (tAdm) tAdm.style.display = 'flex';
-                if (userStatus) userStatus.innerText = "Session : Admin Système (DEVA LABS)";
-                if (dot) dot.style.background = "#e11d48";
-                showScreen('s7');
-                notify("Connecté à votre Espace Administrateur.");
-            } else {
-                if (tLogin) tLogin.style.display = 'flex';
-                if (userStatus) userStatus.innerText = "Non connecté (Portail)";
-                if (dot) dot.style.background = "#94a3b8";
-                showScreen('s1');
-            }
-        }
-
-        function loginAction() {
-            switchSpace(selectedLoginRole);
-        }
-
-        function logoutAction() {
-            switchSpace('Login');
-            notify("Déconnexion réussie. Retour au portail.");
-        }
-
         function scrollToElement(elId) {
             const el = document.getElementById(elId);
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -3508,18 +3539,42 @@
 
         function adminCreateUser() {
             const name = prompt("Nom et prénom du nouvel utilisateur :");
-            if (!name) return;
-            const email = prompt("Email académique :", name.toLowerCase().replace(' ', '.') + "@univ.dz");
+            if (!name || !name.trim()) return;
+            const defaultMail = name.trim().toLowerCase().split(' ').join('.') + "@univ.dz";
+            const email = prompt("Email académique :", defaultMail);
+            if (!email) return;
+
+            const tbody = document.querySelector('#admin-users-table tbody');
+            if (tbody) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><code>${email}</code></td>
+                    <td><strong>${name}</strong></td>
+                    <td><span class="role-pill role-pill-apprenant">Apprenant</span></td>
+                    <td><span style="color:#10b981; font-weight:600;">Actif</span></td>
+                    <td><button class="btn-admin-action" onclick="adminResetPwd('${name}')">MDP</button></td>
+                `;
+                tbody.prepend(tr);
+            }
+
+            const kpi = document.getElementById('admin-kpi-users');
+            if (kpi) kpi.innerText = parseInt(kpi.innerText || '36') + 1;
+
             notify(`Compte créé avec succès pour ${name} (${email}).`);
             const consoleEl = document.getElementById('audit-log-stream');
             if (consoleEl) {
                 const now = new Date().toTimeString().split(' ')[0];
-                consoleEl.innerHTML = `<div class="audit-line"><span class="audit-time">[${now}]</span> <span class="audit-tag-sys">[ADMIN]</span> Nouveau compte créé : ${email}</div>` + consoleEl.innerHTML;
+                consoleEl.innerHTML = `<div class="audit-line"><span class="audit-time">[${now}]</span> <span class="audit-tag-sys">[ADMIN]</span> Nouveau compte créé : ${email} (${name})</div>` + consoleEl.innerHTML;
             }
         }
 
         function adminResetPwd(userName) {
             notify(`Mot de passe réinitialisé pour ${userName}. Email d'instructions envoyé.`);
+            const consoleEl = document.getElementById('audit-log-stream');
+            if (consoleEl) {
+                const now = new Date().toTimeString().split(' ')[0];
+                consoleEl.innerHTML = `<div class="audit-line"><span class="audit-time">[${now}]</span> <span class="audit-tag-auth">[AUTH]</span> Réinitialisation MDP pour ${userName}</div>` + consoleEl.innerHTML;
+            }
         }
 
         function adminTriggerBackup() {
@@ -3527,10 +3582,50 @@
             const consoleEl = document.getElementById('audit-log-stream');
             if (consoleEl) {
                 const now = new Date().toTimeString().split(' ')[0];
-                consoleEl.innerHTML = `<div class="audit-line"><span class="audit-time">[${now}]</span> <span class="audit-tag-sys">[BACKUP]</span> Sauvegarde manuelle réussie : learnweb.db_${now.replace(/:/g,'-')}.bak</div>` + consoleEl.innerHTML;
+                consoleEl.innerHTML = `<div class="audit-line"><span class="audit-time">[${now}]</span> <span class="audit-tag-sys">[BACKUP]</span> Sauvegarde manuelle réussie : learnweb.db_backup.sql (5.2 Mo)</div>` + consoleEl.innerHTML;
             }
         }
 
+        function resetDemoState() {
+            app.level2Passed = false;
+            app.level2Attempts = 0;
+            app.answers = [null, null, null];
+            app.currentQIdx = 0;
+
+            const card2 = document.getElementById('card-l2');
+            if (card2) card2.className = "matrix-card status-current";
+            const chip2 = document.getElementById('chip-l2');
+            if (chip2) { chip2.className = "pill-state pill-current"; chip2.innerText = "En cours"; }
+            const att2 = document.getElementById('lbl-att-l2');
+            if (att2) att2.innerText = "0/" + app.maxAttempts;
+
+            const card3 = document.getElementById('card-l3');
+            if (card3) card3.className = "matrix-card status-blocked";
+            const chip3 = document.getElementById('chip-l3');
+            if (chip3) { chip3.className = "pill-state pill-blocked"; chip3.innerText = "Verrouillé"; }
+            const btn3 = document.getElementById('btn-l3');
+            if (btn3) { btn3.className = "btn-card btn-card-blocked"; btn3.innerText = "Verrouillé (RG3)"; }
+
+            const progTxt = document.getElementById('dash-prog-percent');
+            if (progTxt) progTxt.innerText = "33% (1/3 validé)";
+            const progBar = document.getElementById('dash-prog-bar');
+            if (progBar) progBar.style.width = "33%";
+
+            const yLvl = document.getElementById('tbl-yacine-lvl');
+            if (yLvl) yLvl.innerText = "Niveau 2";
+            const yAtt = document.getElementById('tbl-yacine-att');
+            if (yAtt) yAtt.innerText = "0 / " + app.maxAttempts;
+            const yScore = document.getElementById('tbl-yacine-score');
+            if (yScore) yScore.innerHTML = '<span style="color:var(--text-tertiary);">&mdash;</span>';
+            const yStatus = document.getElementById('tbl-yacine-status');
+            if (yStatus) yStatus.innerHTML = '<span style="color:#2563eb; font-weight:600;">En cours</span>';
+
+            notify("État de démonstration réinitialisé : Niveau 3 reverrouillé, tentatives à 0.");
+            showScreen('s2');
+        }
+
+        // Démarrage par défaut directement sur l'Espace Apprenant (Dashboard s2)
+        switchSpace('Apprenant');
     </script>
 </body>
 </html>
