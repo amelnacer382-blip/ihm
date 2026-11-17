@@ -73,6 +73,7 @@ public class DevALabsApp extends JFrame {
     // --- Composants Clés de l'Interface ---
     private CardLayout cardLayout;
     private JPanel mainContainer;
+    private JMenu menuPedagogie;
     private JLabel statusRouteLabel;
     private JLabel statusActiveLevelLabel;
     private JProgressBar globalProgressBar;
@@ -214,9 +215,18 @@ public class DevALabsApp extends JFrame {
         menuParcours.add(miWork);
 
         // Menu Pédagogie
-        JMenu menuPedagogie = new JMenu("Pédagogie");
+        menuPedagogie = new JMenu("Pédagogie");
         JMenuItem miTeacher = new JMenuItem("Espace Enseignant & Règles");
-        miTeacher.addActionListener(e -> showCard(CARD_TEACHER, "Espace Enseignant"));
+        miTeacher.addActionListener(e -> {
+            if (SPACE_APPRENANT.equals(currentSpace) || "Apprenant".equals(currentLoggedRole)) {
+                JOptionPane.showMessageDialog(this,
+                    "⛔ ACCÈS REFUSÉ (Erreur 403 - Sécurité des Rôles)\n\n" +
+                    "En tant qu'Apprenant, vous n'avez pas l'autorisation d'accéder aux interfaces Enseignant.",
+                    "Sécurité RBAC • DEVA LABS", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            showCard(CARD_TEACHER, "Espace Enseignant");
+        });
         menuPedagogie.add(miTeacher);
 
         // Menu Aide & Ergonomie
@@ -398,18 +408,20 @@ public class DevALabsApp extends JFrame {
         // Affiche la toolbar dédiée
         toolBarCardLayout.show(toolBarCardPanel, space);
 
-        // MASQUAGE TOTAL DU HEADER : l'étudiant ne voit JAMAIS les boutons Enseignant ou Admin !
+        // MASQUAGE TOTAL DU HEADER ET DU MENU : l'étudiant ne voit JAMAIS les boutons Enseignant ou Admin !
         if (space.equals(SPACE_APPRENANT)) {
             btnSpacePillApprenant.setVisible(true);
             btnSpacePillEnseignant.setVisible(false); // CACHÉ POUR L'ÉTUDIANT
             btnSpacePillAdmin.setVisible(false);      // CACHÉ POUR L'ÉTUDIANT
-            lblUserSessionTag.setText("Session : yacine.benali (L3 Informatique)");
+            if (menuPedagogie != null) menuPedagogie.setVisible(false); // CACHÉ DANS LE MENU POUR L'ÉTUDIANT
+            lblUserSessionTag.setText("Session : yacine.benali (L3 Informatique • Apprenant)");
             dotSessionStatus.setBackground(COLOR_PRIMARY);
             showCard(CARD_DASHBOARD, "Espace Apprenant • Cursus");
         } else if (space.equals(SPACE_ENSEIGNANT)) {
             btnSpacePillApprenant.setVisible(false);  // CACHÉ POUR L'ENSEIGNANT
             btnSpacePillEnseignant.setVisible(true);
             btnSpacePillAdmin.setVisible(false);      // CACHÉ POUR L'ENSEIGNANT
+            if (menuPedagogie != null) menuPedagogie.setVisible(true);
             lblUserSessionTag.setText("Session : Dr. Meziani (Responsable Pédagogique)");
             dotSessionStatus.setBackground(new Color(139, 92, 246));
             showCard(CARD_TEACHER, "Espace Enseignant • Pilotage Pédagogique");
@@ -417,14 +429,16 @@ public class DevALabsApp extends JFrame {
             btnSpacePillApprenant.setVisible(false);
             btnSpacePillEnseignant.setVisible(false);
             btnSpacePillAdmin.setVisible(true);
-            lblUserSessionTag.setText("Session : Admin Système (DEVA LABS)");
+            if (menuPedagogie != null) menuPedagogie.setVisible(false);
+            lblUserSessionTag.setText("Session : Admin Système (DEVA LABS • Root)");
             dotSessionStatus.setBackground(new Color(225, 29, 72));
             showCard(CARD_ADMIN, "Espace Administrateur • Supervision");
         } else if (space.equals(SPACE_LOGIN)) {
             btnSpacePillApprenant.setVisible(false);
             btnSpacePillEnseignant.setVisible(false);
             btnSpacePillAdmin.setVisible(false);
-            lblUserSessionTag.setText("Non authentifié");
+            if (menuPedagogie != null) menuPedagogie.setVisible(false);
+            lblUserSessionTag.setText("Non authentifié (Portail)");
             dotSessionStatus.setBackground(COLOR_TEXT_MUTED);
             showCard(CARD_AUTH, "Portail d'Authentification");
         }

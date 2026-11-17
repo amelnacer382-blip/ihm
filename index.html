@@ -2399,51 +2399,7 @@
         <div class="toast-timer-line"></div>
     </div>
 
-    <!-- En-tête Marque DEVA LABS avec Logo Néon Futuriste -->
-    <header class="academic-bar">
-        <div class="brand-container">
-            <div class="brand-logo-frame">
-                <img src="Logo futuriste DEVA LABS en néon.png" 
-                     onerror="if(this.src!=='file:///C:/Users/user/Downloads/Logo%20futuriste%20DEVA%20LABS%20en%20n%C3%A9on.png') this.src='file:///C:/Users/user/Downloads/Logo%20futuriste%20DEVA%20LABS%20en%20n%C3%A9on.png';" 
-                     alt="DEVA LABS Logo" 
-                     class="brand-logo-img">
-            </div>
-            <div class="brand-info">
-                <div class="brand-badge-row">
-                    <span class="brand-badge"><span class="brand-pulse-dot"></span>DEVA LABS TECH</span>
-                    <span class="brand-version">v2.4 &bull; Java Swing IHM</span>
-                </div>
-                <h1 class="brand-title">
-                    <span class="neon-text-deva">DEVA</span><span class="neon-text-labs">LABS</span> &mdash; <span>Plateforme Pédagogique par Niveaux</span>
-                </h1>
-                <p class="brand-subtitle">Architecture Client Riche &bull; Progression Pédagogique Linéaire &bull; Moteur d'Évaluation Automatique</p>
-            </div>
-        </div>
-        <div class="academic-actions">
-            <!-- Sélecteur d'Espaces Dédiés (Apprenant / Enseignant / Admin) -->
-            <div class="space-nav-bar" id="top-space-nav-bar">
-                <span class="space-label">ESPACES DÉDIÉS :</span>
-                <button class="btn-space-pill active" id="badge-space-apprenant" onclick="switchSpace('Apprenant')" title="Basculer vers l'Espace Apprenant">
-                    <span>🎓</span> Espace Apprenant
-                </button>
-                <button class="btn-space-pill pill-enseignant" id="badge-space-enseignant" onclick="switchSpace('Enseignant')" title="Basculer vers l'Espace Enseignant">
-                    <span>👨‍🏫</span> Espace Enseignant
-                </button>
-                <button class="btn-space-pill pill-admin" id="badge-space-admin" onclick="switchSpace('Admin')" title="Basculer vers l'Espace Administrateur">
-                    <span>⚙️</span> Espace Administrateur
-                </button>
-            </div>
 
-            <!-- Bouton Bascule Thème Clair / Sombre -->
-            <button class="btn-theme-toggle" onclick="toggleColorTheme()" id="btn-theme">
-                <span>🌓</span> Thème Clair / Sombre
-            </button>
-            <button class="btn-ergo-toggle" onclick="toggleErgoDrawer()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                Fiche Ergonomique (Bastien &amp; Scapin)
-            </button>
-        </div>
-    </header>
 
     <!-- Fenêtre du Logiciel Desktop Java Swing (Look Lumineux & Moderne) -->
     <main class="software-window">
@@ -2457,18 +2413,27 @@
                     <span class="w-dot w-max" title="Plein écran" onclick="windowAction('max')"></span>
                 </div>
                 <div class="app-caption">
-                    <strong>DEVA LABS Studio</strong> &mdash; <span id="caption-route">Authentification</span>
+                    <strong>DEVA LABS Studio</strong> &mdash; <span id="caption-route">Tableau de bord</span>
                 </div>
             </div>
-            <span style="font-size: 0.72rem; color: var(--text-tertiary); font-family: var(--font-mono); font-weight: 500;">JFrame &bull; javax.swing</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button class="btn-theme-toggle" onclick="toggleColorTheme()" title="Basculer thème clair/sombre" style="padding:3px 8px; font-size:0.75rem; border-radius:5px; background:var(--bg-subtle); border:1px solid var(--border-default); color:var(--text-secondary); cursor:pointer;">
+                    <span>🌓</span> Thème
+                </button>
+                <button class="btn-ergo-toggle" onclick="toggleErgoDrawer()" title="Fiche ergonomique Bastien & Scapin" style="padding:3px 10px; font-size:0.75rem; border-radius:5px; background:var(--accent-blue); color:white; border:none; cursor:pointer;">
+                    ℹ️ Bastien &amp; Scapin
+                </button>
+                <span style="font-size: 0.72rem; color: var(--text-tertiary); font-family: var(--font-mono); font-weight: 500;">JFrame &bull; javax.swing</span>
+            </div>
         </div>
 
         <!-- 2. JMenuBar Swing Réel -->
         <div class="swing-menubar">
             <span class="menu-item menu-item-fichier" onclick="menuFichierAction()">Fichier ▾</span>
             <span class="menu-item menu-item-edition" onclick="resetDemoState()">Édition (Reset)</span>
-            <span class="menu-item menu-item-parcours" onclick="switchSpace('Apprenant'); showScreen('s2');">Parcours</span>
-            <span class="menu-item menu-item-pedagogie" onclick="switchSpace('Enseignant');">Pédagogie</span>
+            <span class="menu-item" id="menu-parcours" onclick="showScreen('s2');" style="color:var(--accent-blue); font-weight:700;">Parcours (Cursus)</span>
+            <span class="menu-item" id="menu-pedagogie" onclick="showScreen('s6');" style="color:#8b5cf6; font-weight:700; display:none;">👨‍🏫 Pédagogie (Enseignant)</span>
+            <span class="menu-item" id="menu-admin" onclick="showScreen('s7');" style="color:#e11d48; font-weight:700; display:none;">⚙️ Administration (Root)</span>
             <span class="menu-item menu-item-aide" onclick="toggleErgoDrawer()">Aide &amp; Ergonomie</span>
         </div>
 
@@ -2544,12 +2509,12 @@
 
                     <div class="form-row">
                         <label>Identifiant académique</label>
-                        <input type="text" class="input-text" id="auth-login" value="yacine.benali@univ.dz">
+                        <input type="text" class="input-text" id="auth-login" value="yacine.benali@univ.dz" onkeydown="if(event.key==='Enter') loginAction()">
                     </div>
 
                     <div class="form-row">
                         <label>Mot de passe</label>
-                        <input type="password" class="input-text" value="••••••••••••">
+                        <input type="password" class="input-text" value="••••••••••••" onkeydown="if(event.key==='Enter') loginAction()">
                     </div>
 
                     <button class="btn-submit-auth" onclick="loginAction()">Ouvrir ma session ➔</button>
@@ -3144,6 +3109,22 @@
         }
 
         function showScreen(id) {
+            // CONTRÔLE D'ACCÈS DE SÉCURITÉ STRICT PAR RÔLE (RBAC - RG6 & RG7)
+            if (currentLoggedRole === 'Apprenant') {
+                if (id === 's6' || id === 's7') {
+                    notify("⛔ ACCÈS REFUSÉ (Erreur 403) : En tant qu'Apprenant, vous n'avez pas l'autorisation d'accéder aux interfaces Enseignant / Administrateur.");
+                    return;
+                }
+            } else if (currentLoggedRole === 'Enseignant') {
+                if (id === 's7') {
+                    notify("⛔ ACCÈS REFUSÉ (Erreur 403) : Privilèges Administrateur requis pour cette console.");
+                    return;
+                }
+            } else if (!currentLoggedRole && id !== 's1') {
+                notify("🔒 Veuillez vous connecter pour accéder à l'application.");
+                id = 's1';
+            }
+
             document.querySelectorAll('.screen-pane').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
 
@@ -3154,11 +3135,11 @@
             if (tabBtn) tabBtn.classList.add('active');
 
             const names = {
-                s1: "Portail d'Authentification",
-                s2: "Espace Apprenant &bull; Tableau de bord",
-                s3: "Espace Apprenant &bull; Cours &amp; Atelier",
-                s4: "Espace Apprenant &bull; Évaluation",
-                s5: "Espace Apprenant &bull; Relevé de notes",
+                s1: "Portail d'Authentification (DEVA LABS)",
+                s2: "Espace Apprenant &bull; Cursus &amp; Hub des Niveaux",
+                s3: "Espace Apprenant &bull; Cours &amp; Atelier Pratique",
+                s4: "Espace Apprenant &bull; Évaluation Certifiante (RG3)",
+                s5: "Espace Apprenant &bull; Relevé de Notes &amp; Délibération",
                 s6: "Espace Enseignant &bull; Pilotage Pédagogique",
                 s7: "Espace Administrateur &bull; Supervision Système"
             };
@@ -3180,18 +3161,8 @@
             switchSpace(selectedLoginRole);
         }
 
-        function updateHeaderBadges(role) {
-            const bApp = document.getElementById('badge-space-apprenant');
-            const bEns = document.getElementById('badge-space-enseignant');
-            const bAdm = document.getElementById('badge-space-admin');
-            if (bApp) bApp.classList.toggle('active', role === 'Apprenant');
-            if (bEns) bEns.classList.toggle('active', role === 'Enseignant');
-            if (bAdm) bAdm.classList.toggle('active', role === 'Admin');
-        }
-
         function switchSpace(role) {
             currentLoggedRole = (role === 'Login') ? null : role;
-            updateHeaderBadges(role);
 
             const tLogin = document.getElementById('toolbar-s1');
             const tApp = document.getElementById('toolbar-apprenant');
@@ -3202,29 +3173,49 @@
             if (tEns) tEns.style.display = 'none';
             if (tAdm) tAdm.style.display = 'none';
 
+            const mParcours = document.getElementById('menu-parcours');
+            const mPedagogie = document.getElementById('menu-pedagogie');
+            const mAdmin = document.getElementById('menu-admin');
+
             const userStatus = document.getElementById('user-status-text');
             const dot = document.getElementById('user-dot-status');
 
             if (role === 'Apprenant') {
                 if (tApp) tApp.style.display = 'flex';
-                if (userStatus) userStatus.innerText = "Session : yacine.benali (L3 Informatique)";
+                if (mParcours) mParcours.style.display = 'inline-block';
+                if (mPedagogie) mPedagogie.style.display = 'none';
+                if (mAdmin) mAdmin.style.display = 'none';
+
+                if (userStatus) userStatus.innerText = "Session : yacine.benali (L3 Informatique • Apprenant)";
                 if (dot) dot.style.background = "#2563eb";
                 showScreen('s2');
-                notify("Espace Apprenant activé.");
+                notify("Session Apprenant ouverte : Cursus et ateliers actifs.");
             } else if (role === 'Enseignant') {
                 if (tEns) tEns.style.display = 'flex';
+                if (mParcours) mParcours.style.display = 'none';
+                if (mPedagogie) mPedagogie.style.display = 'inline-block';
+                if (mAdmin) mAdmin.style.display = 'none';
+
                 if (userStatus) userStatus.innerText = "Session : Dr. Meziani (Responsable Pédagogique)";
                 if (dot) dot.style.background = "#8b5cf6";
                 showScreen('s6');
-                notify("Espace Enseignant activé.");
+                notify("Session Enseignant ouverte : Pilotage pédagogique.");
             } else if (role === 'Admin') {
                 if (tAdm) tAdm.style.display = 'flex';
-                if (userStatus) userStatus.innerText = "Session : Admin Système (DEVA LABS)";
+                if (mParcours) mParcours.style.display = 'none';
+                if (mPedagogie) mPedagogie.style.display = 'none';
+                if (mAdmin) mAdmin.style.display = 'inline-block';
+
+                if (userStatus) userStatus.innerText = "Session : Admin Système (DEVA LABS • Root)";
                 if (dot) dot.style.background = "#e11d48";
                 showScreen('s7');
-                notify("Espace Administrateur activé.");
+                notify("Session Administrateur ouverte : Supervision système.");
             } else {
                 if (tLogin) tLogin.style.display = 'flex';
+                if (mParcours) mParcours.style.display = 'none';
+                if (mPedagogie) mPedagogie.style.display = 'none';
+                if (mAdmin) mAdmin.style.display = 'none';
+
                 if (userStatus) userStatus.innerText = "Non connecté (Portail)";
                 if (dot) dot.style.background = "#94a3b8";
                 showScreen('s1');
@@ -3233,7 +3224,7 @@
 
         function logoutAction() {
             switchSpace('Login');
-            notify("Déconnexion réussie. Retour au portail central.");
+            notify("Déconnexion réussie. Retour au portail central d'authentification.");
         }
 
         function openLesson(lvl) {
@@ -3624,8 +3615,8 @@
             showScreen('s2');
         }
 
-        // Démarrage par défaut directement sur l'Espace Apprenant (Dashboard s2)
-        switchSpace('Apprenant');
+        // Démarrage par défaut sur le portail d'authentification centralisé
+        switchSpace('Login');
     </script>
 </body>
 </html>
